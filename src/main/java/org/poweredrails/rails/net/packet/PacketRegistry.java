@@ -31,7 +31,13 @@ public class PacketRegistry {
 
     private Map<Integer, Class<? extends Packet>> packets = new HashMap<>();
 
-    private PacketRegistry() {
+    /**
+     * <p>
+     *     Register all packets to their ids.
+     * </p>
+     */
+    public PacketRegistry() {
+        //
     }
 
     /**

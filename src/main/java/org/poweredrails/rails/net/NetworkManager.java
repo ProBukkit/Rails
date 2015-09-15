@@ -32,14 +32,20 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
+import org.poweredrails.rails.net.channel.ServerChannelInitializer;
+import org.poweredrails.rails.net.handler.HandlerRegistry;
+import org.poweredrails.rails.net.packet.PacketRegistry;
 
 import java.net.SocketAddress;
 
 public class NetworkManager {
 
-    private final ServerBootstrap nettyBootstrap = new ServerBootstrap();
+    private final ServerBootstrap nettyBootstrap  = new ServerBootstrap();
     private final EventLoopGroup nettyBossGroup = new NioEventLoopGroup();
     private final EventLoopGroup nettyWorkerGroup = new NioEventLoopGroup();
+
+    private final PacketRegistry packetRegistry = new PacketRegistry();
+    private final HandlerRegistry handlerRegistry = new HandlerRegistry();
 
     /**
      * <p>
@@ -51,7 +57,8 @@ public class NetworkManager {
                 .group(this.nettyBossGroup, this.nettyWorkerGroup)
                 .channel(NioServerSocketChannel.class)
                 .childOption(ChannelOption.TCP_NODELAY, true)
-                .childOption(ChannelOption.SO_KEEPALIVE, true);
+                .childOption(ChannelOption.SO_KEEPALIVE, true)
+                .childHandler(new ServerChannelInitializer(this.packetRegistry, this.handlerRegistry));
     }
 
     /**

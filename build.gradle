@@ -52,7 +52,8 @@ jar {
                 'Created-By': "${System.properties['java.vm.version']} (${System.properties['java.vm.vendor']})",
                 'Implementation-Description': name,
                 'Implementation-Version': version,
-                'Implementation-Vendor': url
+                'Implementation-Vendor': url,
+                'Main-Class': 'org.poweredrails.rails.Main'
     )
   }
 }

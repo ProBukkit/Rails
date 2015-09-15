@@ -31,8 +31,13 @@ public class HandlerRegistry {
 
     private List<Object> handlerList = new ArrayList<>();
 
-    private HandlerRegistry() {
-        // Register any packet handlers.
+    /**
+     * <p>
+     *     Register any packet handlers.
+     * </p>
+     */
+    public HandlerRegistry() {
+        //
     }
 
     /**

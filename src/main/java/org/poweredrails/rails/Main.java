@@ -22,17 +22,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.net.channel;
+package org.poweredrails.rails;
 
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.socket.SocketChannel;
+import org.poweredrails.rails.net.NetworkManager;
 
-public class RailsChannelInitializer extends ChannelInitializer<SocketChannel> {
+import java.net.InetSocketAddress;
 
-    @Override
-    protected final void initChannel(SocketChannel socketChannel) {
+public class Main {
 
+    /**
+     * <p>
+     *     Start the server.
+     * </p>
+     *
+     * @param args Any boot arguments.
+     */
+    public static void main(String[] args) {
+        System.out.println("Starting server...");
+
+        NetworkManager nm = new NetworkManager();
+        nm.bindTo(InetSocketAddress.createUnresolved("localhost", 25565));
     }
-
 
 }
