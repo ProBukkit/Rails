@@ -24,12 +24,14 @@
  */
 package org.poweredrails.rails.net.packet;
 
+import org.poweredrails.rails.net.packet.handshake.PacketReceiveHandshake;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class PacketRegistry {
 
-    private Map<Integer, Class<? extends Packet>> packets = new HashMap<>();
+    private Map<SessionStateEnum, Map<Integer, Class<? extends Packet>>> packets = new HashMap<>();
 
     /**
      * <p>
@@ -37,7 +39,7 @@ public class PacketRegistry {
      * </p>
      */
     public PacketRegistry() {
-        //
+        register(SessionStateEnum.HANDSHAKE, 0x00, PacketReceiveHandshake.class);
     }
 
     /**
@@ -45,11 +47,16 @@ public class PacketRegistry {
      *     Finds the class of the packet registered to that id, then creates a new instance of it.
      * </p>
      *
+     * @param state The session state.
      * @param id The id of the packet.
      * @return A new instance of the packet registered.
      */
-    public Packet createPacket(int id) {
-        Class<? extends Packet> clazz = getPacketClass(id);
+    public Packet createPacket(SessionStateEnum state, int id) {
+        Class<? extends Packet> clazz = getPacketClass(state, id);
+
+        if (clazz == null) {
+            throw new RuntimeException("Packet doesn't exist by state " + state.name() + " and id " + id + "!");
+        }
 
         Packet packet = null;
         try {
@@ -67,18 +74,26 @@ public class PacketRegistry {
      *     Finds the class of the packet registered to that id, and returns it.
      * </p>
      *
+     * @param state The session state.
      * @param id The id of the packet.
      * @return The class of the packet.
      */
-    public Class<? extends Packet> getPacketClass(int id) {
-        return this.packets.get(id);
+    public Class<? extends Packet> getPacketClass(SessionStateEnum state, int id) {
+        if (this.packets.containsKey(state)) {
+            return this.packets.get(state).get(id);
+        }
+
+        return null;
     }
 
-    private void register(int id, Class<? extends Packet> clazz) {
-        if (this.packets.containsKey(id)) {
-            throw new RuntimeException("Packet with id " + id + " is already registered!");
+    private void register(SessionStateEnum state, int id, Class<? extends Packet> clazz) {
+        if (this.packets.containsKey(state)) {
+            this.packets.get(state).put(id, clazz);
         }
-        this.packets.put(id, clazz);
+
+        Map<Integer, Class<? extends Packet>> map = new HashMap<>();
+        map.put(id, clazz);
+        this.packets.put(state, map);
     }
 
 }

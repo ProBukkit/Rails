@@ -24,6 +24,8 @@
  */
 package org.poweredrails.rails.net.handler;
 
+import org.poweredrails.rails.net.handler.handshake.HandshakePacketHandler;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +39,7 @@ public class HandlerRegistry {
      * </p>
      */
     public HandlerRegistry() {
-        //
+        this.handlerList.add(new HandshakePacketHandler());
     }
 
     /**

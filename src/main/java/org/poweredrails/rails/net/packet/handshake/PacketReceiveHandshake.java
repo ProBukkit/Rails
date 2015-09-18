@@ -22,18 +22,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.net.packet;
+package org.poweredrails.rails.net.packet.handshake;
 
 import org.poweredrails.rails.net.buffer.Buffer;
 import org.poweredrails.rails.net.handler.HandlerRegistry;
+import org.poweredrails.rails.net.handler.handshake.HandshakePacketHandler;
+import org.poweredrails.rails.net.packet.Packet;
 
-public class TestPacket implements Packet {
+public class PacketReceiveHandshake implements Packet {
 
-    private int foo;
+    private int protocol;
+    private String address;
+    private int port;
+    private int state;
 
     @Override
     public void fromBuffer(Buffer buf) {
-
+        this.protocol = buf.readVarInt();
+        this.address = buf.readString();
+        this.port = buf.readUnsignedShort();
+        this.state = buf.readVarInt();
     }
 
     @Override
@@ -43,7 +51,26 @@ public class TestPacket implements Packet {
 
     @Override
     public void handle(HandlerRegistry registry) {
+        HandshakePacketHandler handler = registry.getHandler(HandshakePacketHandler.class);
+        if (handler != null) {
+            handler.onHandshakePacket(this);
+        }
+    }
 
+    public int getProtocol() {
+        return this.protocol;
+    }
+
+    public String getAddress() {
+        return this.address;
+    }
+
+    public int getPort() {
+        return this.port;
+    }
+
+    public int getState() {
+        return this.state;
     }
 
 }

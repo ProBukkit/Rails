@@ -33,7 +33,11 @@ import org.poweredrails.rails.net.packet.PacketEncoder;
 import org.poweredrails.rails.net.packet.PacketHandler;
 import org.poweredrails.rails.net.packet.PacketRegistry;
 
+import java.util.logging.Logger;
+
 public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> {
+
+    private final Logger logger;
 
     private final PacketRegistry packetRegistry;
     private final HandlerRegistry handlerRegistry;
@@ -43,10 +47,12 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
      *     Create a new server channel initializer, injecting the packet and handler registries.
      * </p>
      *
+     * @param logger An instance of the server logger.
      * @param packetRegistry An instance of the packet registry.
      * @param handlerRegistry An instance of the handler registry.
      */
-    public ServerChannelInitializer(PacketRegistry packetRegistry, HandlerRegistry handlerRegistry) {
+    public ServerChannelInitializer(Logger logger, PacketRegistry packetRegistry, HandlerRegistry handlerRegistry) {
+        this.logger = logger;
         this.packetRegistry = packetRegistry;
         this.handlerRegistry = handlerRegistry;
     }
@@ -54,10 +60,9 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
     @Override
     protected final void initChannel(SocketChannel socketChannel) {
         ChannelPipeline pl = socketChannel.pipeline();
-        pl.addLast("decoder", new PacketDecoder(this.packetRegistry));
-        pl.addLast("encoder", new PacketEncoder());
-        pl.addLast("handler", new PacketHandler(this.handlerRegistry));
+        pl.addLast("decoder", new PacketDecoder(this.logger, this.packetRegistry));
+        pl.addLast("encoder", new PacketEncoder(this.logger));
+        pl.addLast("handler", new PacketHandler(this.logger, this.handlerRegistry));
     }
-
 
 }

@@ -30,8 +30,11 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import org.poweredrails.rails.net.buffer.Buffer;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 public class PacketDecoder extends ByteToMessageDecoder {
+
+    private final Logger logger;
 
     private PacketRegistry registry;
 
@@ -40,14 +43,18 @@ public class PacketDecoder extends ByteToMessageDecoder {
      *     Construct a packet decoder for netty, injecting the packet registry.
      * </p>
      *
+     * @param logger An instance of the server logger.
      * @param registry An instance of the packet registry.
      */
-    public PacketDecoder(PacketRegistry registry) {
+    public PacketDecoder(Logger logger, PacketRegistry registry) {
+        this.logger = logger;
         this.registry = registry;
     }
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+        this.logger.info("PacketDecoder > Decoding...");
+
         Buffer buffer = new Buffer(in);
 
         int length = buffer.readVarInt(); // This line may cause futures in the problem.
@@ -57,10 +64,12 @@ public class PacketDecoder extends ByteToMessageDecoder {
 
         int id = buffer.readVarInt();
 
-        Packet packet = this.registry.createPacket(id);
+        Packet packet = this.registry.createPacket(SessionStateEnum.STATUS, id);
         packet.fromBuffer(buffer);
 
         out.add(packet);
+
+        this.logger.info("PacketDecoder > Decoded: " + packet.getClass().getName());
     }
 
 }

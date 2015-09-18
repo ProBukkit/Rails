@@ -24,7 +24,10 @@
  */
 package org.poweredrails.rails.net.buffer;
 
+import com.google.common.base.Charsets;
 import io.netty.buffer.ByteBuf;
+
+import java.nio.charset.Charset;
 
 public class Buffer {
 
@@ -94,12 +97,13 @@ public class Buffer {
      * @return A string, read from the buffer.
      */
     public String readString() {
-        int length = this.buf.readInt();
+        int length = this.readVarInt();
 
         byte[] array = new byte[length];
         this.buf.readBytes(array, 0, length);
 
-        return new String(array);
+//        return new String(this.buf.readBytes(length).array(), Charsets.UTF_8);
+        return new String(array, Charsets.UTF_8);
     }
 
     /**

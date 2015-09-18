@@ -24,33 +24,18 @@
  */
 package org.poweredrails.rails.net.packet;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToByteEncoder;
+public enum SessionStateEnum {
 
-import java.util.logging.Logger;
+    HANDSHAKE, STATUS, LOGIN, PLAY;
 
-public class PacketEncoder extends MessageToByteEncoder<Packet> {
+    public static SessionStateEnum fromId(int id) {
+        for (SessionStateEnum state : values()) {
+            if (state.ordinal() == id) {
+                return state;
+            }
+        }
 
-    private final Logger logger;
-
-    /**
-     * <p>
-     *     Construct a packet encoder for netty.
-     * </p>
-     *
-     * @param logger An instance of the server logger.
-     */
-    public PacketEncoder(Logger logger) {
-        this.logger = logger;
-    }
-
-    @Override
-    protected void encode(ChannelHandlerContext ctx, Packet packet, ByteBuf out) throws Exception {
-        this.logger.info("PacketEncoder > Encoding: " + packet.getClass().getName());
-
-        ByteBuf buf = packet.toBuffer().getByteBuf();
-        out.writeBytes(buf);
+        throw new RuntimeException("Failed to find state by id " + id + "!");
     }
 
 }

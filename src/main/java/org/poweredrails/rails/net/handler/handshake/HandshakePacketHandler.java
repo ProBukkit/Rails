@@ -22,35 +22,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.net.packet;
+package org.poweredrails.rails.net.handler.handshake;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToByteEncoder;
+import org.poweredrails.rails.net.packet.handshake.PacketReceiveHandshake;
 
 import java.util.logging.Logger;
 
-public class PacketEncoder extends MessageToByteEncoder<Packet> {
+public class HandshakePacketHandler {
 
-    private final Logger logger;
+    private final Logger logger = Logger.getLogger("Rails");
 
     /**
      * <p>
-     *     Construct a packet encoder for netty.
+     *     Handle a PacketReceiveHandshake packet.
      * </p>
      *
-     * @param logger An instance of the server logger.
+     * @param packet An instance of the packet to be handled.
      */
-    public PacketEncoder(Logger logger) {
-        this.logger = logger;
-    }
-
-    @Override
-    protected void encode(ChannelHandlerContext ctx, Packet packet, ByteBuf out) throws Exception {
-        this.logger.info("PacketEncoder > Encoding: " + packet.getClass().getName());
-
-        ByteBuf buf = packet.toBuffer().getByteBuf();
-        out.writeBytes(buf);
+    public void onHandshakePacket(PacketReceiveHandshake packet) {
+        this.logger.info("HandshakeHandler > Received HandshakePacket! Hurray!");
     }
 
 }

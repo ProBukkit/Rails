@@ -37,8 +37,11 @@ import org.poweredrails.rails.net.handler.HandlerRegistry;
 import org.poweredrails.rails.net.packet.PacketRegistry;
 
 import java.net.SocketAddress;
+import java.util.logging.Logger;
 
 public class NetworkManager {
+
+    private final Logger logger;
 
     private final ServerBootstrap nettyBootstrap  = new ServerBootstrap();
     private final EventLoopGroup nettyBossGroup = new NioEventLoopGroup();
@@ -51,14 +54,18 @@ public class NetworkManager {
      * <p>
      *     Initiate the channel.
      * </p>
+     *
+     * @param logger An instance of the server logger.
      */
-    public NetworkManager() {
+    public NetworkManager(Logger logger) {
+        this.logger = logger;
+
         this.nettyBootstrap
                 .group(this.nettyBossGroup, this.nettyWorkerGroup)
                 .channel(NioServerSocketChannel.class)
                 .childOption(ChannelOption.TCP_NODELAY, true)
                 .childOption(ChannelOption.SO_KEEPALIVE, true)
-                .childHandler(new ServerChannelInitializer(this.packetRegistry, this.handlerRegistry));
+                .childHandler(new ServerChannelInitializer(this.logger, this.packetRegistry, this.handlerRegistry));
     }
 
     /**
@@ -93,10 +100,14 @@ public class NetworkManager {
     }
 
     private void onBindSuccess(SocketAddress address) {
+        this.logger.info("NetworkManager -> BindSuccess");
+
         // Call "BindServerEvent"
     }
 
     private void onBindFailure(SocketAddress address, Throwable throwable) {
+        this.logger.info("NetworkManager -> BindFailure");
+
         // Call "BindServerEvent"
     }
 

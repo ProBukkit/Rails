@@ -28,7 +28,11 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.poweredrails.rails.net.handler.HandlerRegistry;
 
+import java.util.logging.Logger;
+
 public class PacketHandler extends SimpleChannelInboundHandler<Packet> {
+
+    private final Logger logger;
 
     private HandlerRegistry registry;
 
@@ -37,14 +41,18 @@ public class PacketHandler extends SimpleChannelInboundHandler<Packet> {
      *     Construct a packet handler for netty, injecting the handler registry.
      * </p>
      *
+     * @param logger An instance of the server logger.
      * @param registry An instance of the handler registry.
      */
-    public PacketHandler(HandlerRegistry registry) {
+    public PacketHandler(Logger logger, HandlerRegistry registry) {
+        this.logger = logger;
         this.registry = registry;
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Packet packet) throws Exception {
+        this.logger.info("PacketHandler > Handling: " + packet.getClass().getName());
+
         packet.handle(this.registry);
     }
 

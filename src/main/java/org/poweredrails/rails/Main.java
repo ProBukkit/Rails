@@ -27,8 +27,11 @@ package org.poweredrails.rails;
 import org.poweredrails.rails.net.NetworkManager;
 
 import java.net.InetSocketAddress;
+import java.util.logging.Logger;
 
 public class Main {
+
+    private static final Logger logger = Logger.getLogger("Rails");
 
     /**
      * <p>
@@ -38,10 +41,10 @@ public class Main {
      * @param args Any boot arguments.
      */
     public static void main(String[] args) {
-        System.out.println("Starting server...");
+        logger.info("Starting server...");
 
-        NetworkManager nm = new NetworkManager();
-        nm.bindTo(InetSocketAddress.createUnresolved("localhost", 25565));
+        NetworkManager nm = new NetworkManager(logger);
+        nm.bindTo(new InetSocketAddress("localhost", 25565));
     }
 
 }
