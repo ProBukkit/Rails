@@ -96,6 +96,7 @@ processResources {
 }
 
 checkstyle {
+    toolVersion = "6.11"
     configFile = file('checkstyle.xml')
     configProperties = [
             'basedir': projectDir,
