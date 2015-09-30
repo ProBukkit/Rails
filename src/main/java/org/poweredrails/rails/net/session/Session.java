@@ -24,7 +24,8 @@
  */
 package org.poweredrails.rails.net.session;
 
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 import org.poweredrails.rails.net.packet.Packet;
 
 import java.util.logging.Logger;

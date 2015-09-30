@@ -153,7 +153,7 @@ public class Buffer {
     }
 
     /**
-     * Reads an unsigned byte from the byte buffer,
+     * Reads an unsigned byte from the byte buffer.
      * @return unsigned byte
      */
     public short readUnsignedByte() {

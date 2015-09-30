@@ -24,9 +24,8 @@
  */
 package org.poweredrails.rails.net.packet;
 
-import org.poweredrails.rails.net.buffer.Buffer;
-
 import com.google.common.reflect.TypeToken;
+import org.poweredrails.rails.net.buffer.Buffer;
 import org.poweredrails.rails.net.session.Session;
 
 import java.io.Serializable;

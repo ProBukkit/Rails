@@ -24,7 +24,9 @@
  */
 package org.poweredrails.rails.net.packet.registry;
 
-import static org.poweredrails.rails.net.session.SessionStateEnum.*;
+import static org.poweredrails.rails.net.session.SessionStateEnum.HANDSHAKE;
+import static org.poweredrails.rails.net.session.SessionStateEnum.LOGIN;
+import static org.poweredrails.rails.net.session.SessionStateEnum.STATUS;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
