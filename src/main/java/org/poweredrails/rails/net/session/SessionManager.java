@@ -38,12 +38,9 @@ public class SessionManager {
     private List<Session> sessionList = new ArrayList<>();
 
     /**
-     * <p>
-     *     Get an instance of the session for the handler context it relates to.
-     * </p>
-     *
-     * @param ctx The handler context to obtain a session with.
-     * @return The session related.
+     * Gets an instance of the session for the connection it relates to.
+     * @param ctx connection
+     * @return session
      */
     public Session getSession(ChannelHandlerContext ctx) {
         for (Session session : this.sessionList) {
@@ -58,11 +55,8 @@ public class SessionManager {
     }
 
     /**
-     * <p>
-     *     Dispose of any sessions relating to this handler context.
-     * </p>
-     *
-     * @param ctx The handler context to dispose any session related to.
+     * Disposes of any sessions relating to this connection.
+     * @param ctx connection
      */
     public void dispose(ChannelHandlerContext ctx) {
         Iterator<Session> it = this.sessionList.iterator();

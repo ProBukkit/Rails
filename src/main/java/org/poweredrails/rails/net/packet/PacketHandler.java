@@ -44,16 +44,6 @@ public class PacketHandler extends SimpleChannelInboundHandler<UnresolvedPacket>
     private HandlerRegistry handlerRegistry;
     private SessionManager sessionManager;
 
-    /**
-     * <p>
-     *     Construct a packet handler for netty, injecting the handler registry.
-     * </p>
-     *
-     * @param logger An instance of the server logger.
-     * @param sessionManager An instance of the session manager.
-     * @param packetRegistry An instance of the packet registry.
-     * @param handlerRegistry An instance of the handler registry.
-     */
     public PacketHandler(Logger logger, SessionManager sessionManager, PacketRegistry packetRegistry,
                          HandlerRegistry handlerRegistry) {
         this.logger = logger;
@@ -81,8 +71,9 @@ public class PacketHandler extends SimpleChannelInboundHandler<UnresolvedPacket>
             return;
         }
 
-        // Packet<?> packet = factory.create();
-        // packet.fromBuffer(buffer);
+        Packet<?> packet = factory.create();
+        packet.fromBuffer(buffer);
+        this.handlerRegistry.onHandle(session, packet);
     }
 
 }

@@ -40,26 +40,26 @@ public abstract class Packet<T> implements Serializable {
     };
 
     /**
-     * Write packet data to the buffer.
+     * Writes packet data to the buffer.
      * @param buffer packet buffer
      */
     public abstract void toBuffer(Buffer buffer);
 
     /**
-     * Read packet data from the buffer.
+     * Reads packet data from the buffer.
      * @param buffer packet buffer
      */
     public abstract void fromBuffer(Buffer buffer);
 
     /**
-     * Handle this packet's read data.
+     * Handles this packet's read data.
      * @param session packet session
      * @param handler packet handler
      */
     public abstract void handle(Session session, T handler);
 
     /**
-     * Return this packet's handler class.
+     * Returns this packet's handler class.
      * @return packet handler class
      */
     @SuppressWarnings("unchecked")

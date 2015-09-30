@@ -36,11 +36,8 @@ public class Main {
     private static final Logger logger = Logger.getLogger("Rails");
 
     /**
-     * <p>
-     *     Starts the Server.
-     * </p>
-     *
-     * @param args boot arguments.
+     * Starts the Server.
+     * @param args boot arguments
      */
     public static void main(String[] args) {
         ConsoleHandler consoleHandler = new ConsoleHandler();

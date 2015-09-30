@@ -37,6 +37,12 @@ public class StatusPacketHandler {
 
     private final Logger logger = Logger.getLogger("Rails");
 
+    /**
+     * Handles a status request packet.
+     * @param session sender
+     * @param packet status request packet
+     * @throws JSONException if the
+     */
     public void onStatusRequestPacket(Session session, PacketReceiveStatusRequest packet) throws JSONException {
         PacketSendStatusResponse response = new PacketSendStatusResponse();
         session.sendPacket(response);
@@ -44,6 +50,11 @@ public class StatusPacketHandler {
         this.logger.info("Responded to a status request.");
     }
 
+    /**
+     * Handles a ping packet.
+     * @param session sender
+     * @param packet ping packet
+     */
     public void onPingPacket(Session session, PacketReceivePing packet) {
         PacketSendPong response = new PacketSendPong(packet.getTime());
         session.sendPacket(response);

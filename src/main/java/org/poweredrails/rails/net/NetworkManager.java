@@ -53,15 +53,7 @@ public class NetworkManager {
 
     private SessionManager sessionManager = new SessionManager();
 
-    /**
-     * <p>
-     *     Initiate the channel.
-     * </p>
-     *
-     * @param logger An instance of the server logger.
-     */
     public NetworkManager(Logger logger) {
-        
         this.logger = logger;
 
         this.nettyBootstrap
@@ -74,12 +66,9 @@ public class NetworkManager {
     }
 
     /**
-     * <p>
-     *     Bind the channel to the provided address.
-     * </p>
-     *
-     * @param socketAddress The address to bind the channel to.
-     * @return The result of the binding.
+     * Binds the channel to the provided address.
+     * @param socketAddress address to bind to
+     * @return result
      */
     public ChannelFuture bindTo(final SocketAddress socketAddress) {
         return this.nettyBootstrap.bind(socketAddress).addListener(new GenericFutureListener<Future<? super Void>>() {
@@ -95,9 +84,7 @@ public class NetworkManager {
     }
 
     /**
-     * <p>
-     *     Shutdown the channel gracefully.
-     * </p>
+     * Shuts down the channel gracefully.
      */
     public void shutdown() {
         this.nettyWorkerGroup.shutdownGracefully();

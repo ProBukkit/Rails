@@ -34,10 +34,7 @@ public class Buffer {
     private ByteBuf buf;
 
     /**
-     * <p>
-     *     Constructs a wrapper around the byte buffer provided.
-     * </p>
-     *
+     * Constructs a wrapper around the byte buffer provided.
      * @param buf The byte buffer to wrap around.
      */
     public Buffer(ByteBuf buf) {
@@ -45,49 +42,56 @@ public class Buffer {
     }
 
     /**
-     * @return The byte buffer currently wrapping around.
+     * Returns the byte buffer this class wraps.
+     * @return ByteBuf the byte buf
      */
     public ByteBuf getByteBuf() {
         return this.buf;
     }
 
     /**
-     * @param value An integer, to be written.
+     * Writes an integer to the byte buffer.
+     * @param value integer
      */
     public void writeInt(int value) {
         this.buf.writeInt(value);
     }
 
     /**
-     * @param value A long, to be written.
+     * Writes a long to the byte buffer.
+     * @param value long
      */
     public void writeLong(long value) {
         this.buf.writeLong(value);
     }
 
     /**
-     * @param value A short, to be written.
+     * Writes a short to the byte buffer.
+     * @param value short
      */
     public void writeShort(short value) {
         this.buf.writeShort(value);
     }
 
     /**
-     * @param value A byte, to be written.
+     * Writes a byte to the byte buffer.
+     * @param value byte
      */
     public void writeByte(byte value) {
         this.buf.writeByte(value);
     }
 
     /**
-     * @param value An integer, to be written.
+     * Writes a byte to the byte buffer.
+     * @param value integer
      */
     public void writeByte(int value) {
         this.buf.writeByte(value);
     }
 
     /**
-     * @param value A string, to be written.
+     * Writes a string to the byte buffer.
+     * @param value string
      */
     public void writeString(String value) {
         byte[] array = value.getBytes();
@@ -97,7 +101,8 @@ public class Buffer {
     }
 
     /**
-     * @param value An integer, to be written.
+     * Writes a var int to the byte buffer.
+     * @param value integer
      */
     public void writeVarInt(int value) {
         while ((value & -128L) != 0L) {
@@ -108,49 +113,56 @@ public class Buffer {
     }
 
     /**
-     * @return An integer, read from the buffer.
+     * Reads an integer from the byte buffer.
+     * @return integer
      */
     public int readInt() {
         return this.buf.readInt();
     }
 
     /**
-     * @return A long, read from the buffer.
+     * Reads a long from the byte buffer.
+     * @return long
      */
     public long readLong() {
         return this.buf.readLong();
     }
 
     /**
-     * @return A short, read from the buffer.
+     * Reads a short from the byte buffer.
+     * @return short
      */
     public short readShort() {
         return this.buf.readShort();
     }
 
     /**
-     * @return A unsigned short, read from the buffer.
+     * Reads an unsigned short from the byte buffer.
+     * @return unsigned short
      */
     public int readUnsignedShort() {
         return this.buf.readUnsignedShort();
     }
 
     /**
-     * @return A byte, read from the buffer.
+     * Reads a byte from the byte buffer.
+     * @return byte
      */
     public byte readByte() {
         return this.buf.readByte();
     }
 
     /**
-     * @return An unsigned byte, read from the buffer.
+     * Reads an unsigned byte from the byte buffer,
+     * @return unsigned byte
      */
     public short readUnsignedByte() {
         return this.buf.readUnsignedByte();
     }
 
     /**
-     * @return A string, read from the buffer.
+     * Reads a string from the byte buffer.
+     * @return string
      */
     public String readString() {
         int length = this.readVarInt();
@@ -158,12 +170,12 @@ public class Buffer {
         byte[] array = new byte[length];
         this.buf.readBytes(array, 0, length);
 
-//        return new String(this.buf.readBytes(length).array(), Charsets.UTF_8);
         return new String(array, Charsets.UTF_8);
     }
 
     /**
-     * @return A var int, read from the buffer.
+     * Reads a var int from the byte buffer.
+     * @return var int
      */
     public int readVarInt() {
         int result = 0;
@@ -182,25 +194,22 @@ public class Buffer {
     }
 
     /**
-     * @return The amount of readable bytes currently in the buffer.
+     * Returns the amount of readable bytes in the byte buffer.
+     * @return amount of bytes
      */
     public int readableBytes() {
         return this.buf.readableBytes();
     }
 
     /**
-     * <p>
-     *     Mark the reader index.
-     * </p>
+     * Marks the reader index.
      */
     public void markReaderIndex() {
         this.buf.markReaderIndex();
     }
 
     /**
-     * <p>
-     *     Reset the reader index.
-     * </p>
+     * Resets the reader index.
      */
     public void resetReaderIndex() {
         this.buf.resetReaderIndex();

@@ -47,7 +47,7 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
     private SessionManager sessionManager;
 
     /**
-     * Create a new server channel initializer, injecting the packet and handler registries.
+     * Creates a new server channel initializer.
      * @param logger logger
      * @param sessionManager session manager
      * @param packetRegistry packet registry

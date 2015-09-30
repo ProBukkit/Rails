@@ -41,68 +41,41 @@ public class Session {
     private SessionStateEnum state = SessionStateEnum.HANDSHAKE;
 
     /**
-     * <p>
-     *     Create a new session around the channel handler context, represents the connection between a client
-     *     and the server.
-     * </p>
-     *
-     * @param ctx The connection.
+     * Creates a new session around the channel handler context, represents the connection between a client
+     * and the server.
+     * @param ctx connection
      */
     public Session(ChannelHandlerContext ctx) {
         this.channel = ctx.channel();
     }
 
     /**
-     * <p>
-     *     Return the channel handler context for this session.
-     * </p>
-     *
-     * @return The channel handler context for this session.
+     * Returns the channel handler context for this session.
+     * @return channel
      */
     public Channel getChannel() {
         return this.channel;
     }
 
     /**
-     * <p>
-     *     Write a packet to the handler context, to be sent to the client.
-     * </p>
-     *
-     * @param packet The packet to be written.
+     * Writes a packet to the handler context, to be sent to the client.
+     * @param packet packet
      */
     public void sendPacket(Packet<?> packet) {
-//        TODO: Remove - debugging.
-//        this.channel.writeAndFlush(packet, new DefaultChannelPromise(this.channel).addListener(new ChannelFutureListener() {
-//            @Override
-//            public void operationComplete(ChannelFuture future) throws Exception {
-//                if (future.isSuccess()) {
-//                    logger.info("Packet send success!");
-//                } else {
-//                    throw new RuntimeException("Packet send failure", future.cause());
-//                }
-//            }
-//        }));
-
         this.channel.writeAndFlush(packet);
     }
 
     /**
-     * <p>
-     *     Return the state for this session.
-     * </p>
-     *
-     * @return This session's state.
+     * Returns the state for this session.
+     * @return session state
      */
     public SessionStateEnum getState() {
         return this.state;
     }
 
     /**
-     * <p>
-     *     Change the state of this session.
-     * </p>
-     *
-     * @param state The state to change it to.
+     * Changes the state of this session.
+     * @param state session state
      */
     public void setState(SessionStateEnum state) {
         this.state = state;

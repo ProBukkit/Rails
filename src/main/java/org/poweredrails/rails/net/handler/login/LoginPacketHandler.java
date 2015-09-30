@@ -33,6 +33,11 @@ public class LoginPacketHandler {
 
     private final Logger logger = Logger.getLogger("Rails");
 
+    /**
+     * Handles a login start packet.
+     * @param session sender
+     * @param packet login start packet
+     */
     public void onLoginStart(Session session, PacketReceiveLoginStart packet) {
         this.logger.info("Session " + session + " starting login (" + packet.getName() + ")");
     }

@@ -36,12 +36,9 @@ public class HandshakePacketHandler {
     private final Logger logger = Logger.getLogger("Rails");
 
     /**
-     * <p>
-     *     Handle a PacketReceiveHandshake packet.
-     * </p>
-     *
-     * @param session Session from which the packet was received.
-     * @param packet An instance of the packet to be handled.
+     * Handles a handshake packet.
+     * @param session sender
+     * @param packet handshake packet
      */
     public void onHandshakePacket(Session session, PacketReceiveHandshake packet) {
         SessionStateEnum state = SessionStateEnum.fromId(packet.getState());

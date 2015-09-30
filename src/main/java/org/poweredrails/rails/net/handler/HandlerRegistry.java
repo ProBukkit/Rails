@@ -38,7 +38,7 @@ public class HandlerRegistry {
     private List<Object> handlerList = new ArrayList<>();
 
     /**
-     * Register any packet handlers.
+     * Registers any packet handlers.
      */
     public HandlerRegistry() {
         this.handlerList.add(new HandshakePacketHandler());
@@ -47,7 +47,7 @@ public class HandlerRegistry {
     }
 
     /**
-     * Call the handle method on a packet.
+     * Calls the handle method on a packet.
      * @param <T> handler type
      * @param session session
      * @param packet packet
@@ -62,7 +62,7 @@ public class HandlerRegistry {
     }
 
     /**
-     * Return the handler instance registered by that class.
+     * Returns the handler instance registered by that class.
      * @param clazz handler class
      * @param <T> handler type
      * @return handler instance
