@@ -43,9 +43,10 @@ public class PacketEncoder extends MessageToByteEncoder<Packet<?>> {
     private PacketRegistry registry;
 
     /**
-     * <p>
-     *     Construct a packet encoder for netty.
-     * </p>
+     * Construct a packet encoder for netty.
+     * @param logger logger
+     * @param sessionManager session manager
+     * @param registry packet registry
      */
     public PacketEncoder(Logger logger, SessionManager sessionManager, PacketRegistry registry) {
         this.logger = logger;

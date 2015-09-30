@@ -51,8 +51,6 @@ public abstract class Packet<T> implements Serializable {
      */
     public abstract void fromBuffer(Buffer buffer);
 
-
-
     /**
      * Handle this packet's read data.
      * @param session packet session

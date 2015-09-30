@@ -24,6 +24,8 @@
  */
 package org.poweredrails.rails.net.packet.registry;
 
+import static org.poweredrails.rails.net.session.SessionStateEnum.*;
+
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import org.poweredrails.rails.net.packet.Packet;
@@ -38,8 +40,6 @@ import org.poweredrails.rails.net.session.SessionStateEnum;
 
 import java.util.Map;
 
-import static org.poweredrails.rails.net.session.SessionStateEnum.*;
-
 public class PacketRegistry {
 
 //    private final Logger logger = Logger.getLogger("Rails");
@@ -47,6 +47,9 @@ public class PacketRegistry {
     private Table<SessionStateEnum, Integer, Class<? extends Packet<?>>> tableIncoming = HashBasedTable.create();
     private Table<SessionStateEnum, Integer, Class<? extends Packet<?>>> tableOutgoing = HashBasedTable.create();
 
+    /**
+     * Register all packet classes to their ids in different session states.
+     */
     public PacketRegistry() {
         this.tableIncoming.put(HANDSHAKE, 0x00, PacketReceiveHandshake.class);
 
@@ -60,9 +63,10 @@ public class PacketRegistry {
     }
 
     /**
-     * <p>
-     *     Find a packet by its id, and return its factory.
-     * </p>
+     * Find a packet by its id, and return its factory.
+     * @param state session state
+     * @param id packet id
+     * @return PacketFactory - packet factory for packet
      */
     public PacketFactory find(SessionStateEnum state, int id) {
         Class<? extends Packet<?>> clazz = this.tableIncoming.get(state, id);
@@ -75,9 +79,10 @@ public class PacketRegistry {
     }
 
     /**
-     * <p>
-     *     Find a packet's id and return it.
-     * </p>
+     * Find a packet's id and return it.
+     * @param state session state
+     * @param packet packet
+     * @return int - packet id
      */
     public int find(SessionStateEnum state, Packet<?> packet) {
         Class<?> packetClass = packet.getClass();

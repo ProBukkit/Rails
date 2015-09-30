@@ -48,9 +48,10 @@ public class PacketDecoder extends ByteToMessageDecoder {
     private SessionManager sessionManager;
 
     /**
-     * <p>
-     *     Construct a packet decoder for netty, injecting the packet registry.
-     * </p>
+     * Construct a packet decoder for netty, injecting the packet registry.
+     * @param logger logger
+     * @param sessionManager session manager
+     * @param registry packet registry
      */
     public PacketDecoder(Logger logger, SessionManager sessionManager, PacketRegistry registry) {
         this.logger = logger;

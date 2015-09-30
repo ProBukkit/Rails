@@ -48,6 +48,7 @@ public class HandlerRegistry {
 
     /**
      * Call the handle method on a packet.
+     * @param <T> handler type
      * @param session session
      * @param packet packet
      */
