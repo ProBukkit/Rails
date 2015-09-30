@@ -52,6 +52,62 @@ public class Buffer {
     }
 
     /**
+     * @param value An integer, to be written.
+     */
+    public void writeInt(int value) {
+        this.buf.writeInt(value);
+    }
+
+    /**
+     * @param value A long, to be written.
+     */
+    public void writeLong(long value) {
+        this.buf.writeLong(value);
+    }
+
+    /**
+     * @param value A short, to be written.
+     */
+    public void writeShort(short value) {
+        this.buf.writeShort(value);
+    }
+
+    /**
+     * @param value A byte, to be written.
+     */
+    public void writeByte(byte value) {
+        this.buf.writeByte(value);
+    }
+
+    /**
+     * @param value An integer, to be written.
+     */
+    public void writeByte(int value) {
+        this.buf.writeByte(value);
+    }
+
+    /**
+     * @param value A string, to be written.
+     */
+    public void writeString(String value) {
+        byte[] array = value.getBytes();
+
+        this.writeVarInt(array.length);
+        this.buf.writeBytes(array);
+    }
+
+    /**
+     * @param value An integer, to be written.
+     */
+    public void writeVarInt(int value) {
+        while ((value & -128L) != 0L) {
+            this.writeByte((int) (value & 127L) | 128);
+            value >>>= 7;
+        }
+        this.writeByte(value);
+    }
+
+    /**
      * @return An integer, read from the buffer.
      */
     public int readInt() {
@@ -123,6 +179,31 @@ public class Buffer {
             }
         }
         return result;
+    }
+
+    /**
+     * @return The amount of readable bytes currently in the buffer.
+     */
+    public int readableBytes() {
+        return this.buf.readableBytes();
+    }
+
+    /**
+     * <p>
+     *     Mark the reader index.
+     * </p>
+     */
+    public void markReaderIndex() {
+        this.buf.markReaderIndex();
+    }
+
+    /**
+     * <p>
+     *     Reset the reader index.
+     * </p>
+     */
+    public void resetReaderIndex() {
+        this.buf.resetReaderIndex();
     }
 
 }

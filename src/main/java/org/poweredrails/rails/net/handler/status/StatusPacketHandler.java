@@ -22,58 +22,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.net.packet.handshake;
+package org.poweredrails.rails.net.handler.status;
 
-import org.poweredrails.rails.net.buffer.Buffer;
-import org.poweredrails.rails.net.handler.HandlerRegistry;
-import org.poweredrails.rails.net.handler.handshake.HandshakePacketHandler;
-import org.poweredrails.rails.net.packet.Packet;
+import org.json.JSONException;
+import org.poweredrails.rails.net.packet.status.PacketReceivePing;
+import org.poweredrails.rails.net.packet.status.PacketReceiveStatusRequest;
+import org.poweredrails.rails.net.packet.status.PacketSendPong;
+import org.poweredrails.rails.net.packet.status.PacketSendStatusResponse;
 import org.poweredrails.rails.net.session.Session;
 
 import java.util.logging.Logger;
 
-public class PacketReceiveHandshake extends Packet<HandshakePacketHandler> {
+public class StatusPacketHandler {
 
-    private static final long serialVersionUID = 2767186348103136552L;
+    private final Logger logger = Logger.getLogger("Rails");
 
-    private int protocol;
-    private String address;
-    private int port;
-    private int state;
+    public void onStatusRequestPacket(Session session, PacketReceiveStatusRequest packet) throws JSONException {
+        PacketSendStatusResponse response = new PacketSendStatusResponse();
+        session.sendPacket(response);
 
-    @Override
-    public void toBuffer(Buffer buffer) {
+        this.logger.info("Responded to a status request.");
     }
 
-    @Override
-    public void fromBuffer(Buffer buffer) {
-        this.protocol = buffer.readVarInt();
-        this.address  = buffer.readString();
-        this.port     = buffer.readUnsignedShort();
-        this.state    = buffer.readVarInt();
-    }
-
-    @Override
-    public void handle(Session session, HandshakePacketHandler handler) {
-        if (handler != null) {
-            handler.onHandshakePacket(session, this);
-        }
-    }
-
-    public int getProtocol() {
-        return this.protocol;
-    }
-
-    public String getAddress() {
-        return this.address;
-    }
-
-    public int getPort() {
-        return this.port;
-    }
-
-    public int getState() {
-        return this.state;
+    public void onPingPacket(Session session, PacketReceivePing packet) {
+        PacketSendPong response = new PacketSendPong(packet.getTime());
+        session.sendPacket(response);
     }
 
 }

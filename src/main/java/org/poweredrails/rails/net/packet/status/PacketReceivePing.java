@@ -22,58 +22,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.net.packet.handshake;
+package org.poweredrails.rails.net.packet.status;
 
 import org.poweredrails.rails.net.buffer.Buffer;
 import org.poweredrails.rails.net.handler.HandlerRegistry;
-import org.poweredrails.rails.net.handler.handshake.HandshakePacketHandler;
+import org.poweredrails.rails.net.handler.status.StatusPacketHandler;
 import org.poweredrails.rails.net.packet.Packet;
 import org.poweredrails.rails.net.session.Session;
 
-import java.util.logging.Logger;
+public class PacketReceivePing extends Packet<StatusPacketHandler> {
 
-public class PacketReceiveHandshake extends Packet<HandshakePacketHandler> {
+    private static final long serialVersionUID = -3569249616863264576L;
 
-    private static final long serialVersionUID = 2767186348103136552L;
-
-    private int protocol;
-    private String address;
-    private int port;
-    private int state;
+    private long time;
 
     @Override
     public void toBuffer(Buffer buffer) {
+
     }
 
     @Override
     public void fromBuffer(Buffer buffer) {
-        this.protocol = buffer.readVarInt();
-        this.address  = buffer.readString();
-        this.port     = buffer.readUnsignedShort();
-        this.state    = buffer.readVarInt();
+        this.time = buffer.readLong();
     }
 
     @Override
-    public void handle(Session session, HandshakePacketHandler handler) {
+    public void handle(Session session, StatusPacketHandler handler) {
         if (handler != null) {
-            handler.onHandshakePacket(session, this);
+            handler.onPingPacket(session, this);
         }
     }
 
-    public int getProtocol() {
-        return this.protocol;
-    }
-
-    public String getAddress() {
-        return this.address;
-    }
-
-    public int getPort() {
-        return this.port;
-    }
-
-    public int getState() {
-        return this.state;
+    public long getTime() {
+        return this.time;
     }
 
 }

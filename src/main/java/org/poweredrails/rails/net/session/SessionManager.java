@@ -22,38 +22,57 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails;
+package org.poweredrails.rails.net.session;
 
-import org.poweredrails.rails.log.ConsoleFormatter;
-import org.poweredrails.rails.net.NetworkManager;
+import io.netty.channel.ChannelHandlerContext;
 
-import java.net.InetSocketAddress;
-import java.util.logging.ConsoleHandler;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Logger;
 
-public class Main {
+public class SessionManager {
 
-    private static final Logger logger = Logger.getLogger("Rails");
+    private final Logger logger = Logger.getLogger("Rails");
+
+    private List<Session> sessionList = new ArrayList<>();
 
     /**
      * <p>
-     *     Starts the Server.
+     *     Get an instance of the session for the handler context it relates to.
      * </p>
      *
-     * @param args boot arguments.
+     * @param ctx The handler context to obtain a session with.
+     * @return The session related.
      */
-    public static void main(String[] args) {
-        ConsoleHandler consoleHandler = new ConsoleHandler();
-        ConsoleFormatter consoleFormatter = new ConsoleFormatter();
-        consoleHandler.setFormatter(consoleFormatter);
+    public Session getSession(ChannelHandlerContext ctx) {
+        for (Session session : this.sessionList) {
+            if (session.getChannel().equals(ctx.channel())) {
+                return session;
+            }
+        }
 
-        logger.setUseParentHandlers(false);
-        logger.addHandler(consoleHandler);
+        Session session = new Session(ctx);
+        this.sessionList.add(session);
+        return session;
+    }
 
-        logger.info("Starting server...");
+    /**
+     * <p>
+     *     Dispose of any sessions relating to this handler context.
+     * </p>
+     *
+     * @param ctx The handler context to dispose any session related to.
+     */
+    public void dispose(ChannelHandlerContext ctx) {
+        Iterator<Session> it = this.sessionList.iterator();
 
-        NetworkManager networkManager = new NetworkManager(logger);
-        networkManager.bindTo(new InetSocketAddress("localhost", 25565));
+        while (it.hasNext()) {
+            Session session = it.next();
+            if (session.getChannel().equals(ctx.channel())) {
+                it.remove();
+            }
+        }
     }
 
 }

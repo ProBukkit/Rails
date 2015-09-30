@@ -22,58 +22,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.net.packet.handshake;
+package org.poweredrails.rails.net.packet;
 
 import org.poweredrails.rails.net.buffer.Buffer;
-import org.poweredrails.rails.net.handler.HandlerRegistry;
-import org.poweredrails.rails.net.handler.handshake.HandshakePacketHandler;
-import org.poweredrails.rails.net.packet.Packet;
 import org.poweredrails.rails.net.session.Session;
 
-import java.util.logging.Logger;
+public class UnresolvedPacket {
 
-public class PacketReceiveHandshake extends Packet<HandshakePacketHandler> {
+    private Session session;
 
-    private static final long serialVersionUID = 2767186348103136552L;
+    private int id;
+    private Buffer buffer;
 
-    private int protocol;
-    private String address;
-    private int port;
-    private int state;
-
-    @Override
-    public void toBuffer(Buffer buffer) {
+    public UnresolvedPacket(Session session, int id, Buffer buffer) {
+        this.session = session;
+        this.id = id;
+        this.buffer = buffer;
     }
 
-    @Override
-    public void fromBuffer(Buffer buffer) {
-        this.protocol = buffer.readVarInt();
-        this.address  = buffer.readString();
-        this.port     = buffer.readUnsignedShort();
-        this.state    = buffer.readVarInt();
+    public Session getSession() {
+        return this.session;
     }
 
-    @Override
-    public void handle(Session session, HandshakePacketHandler handler) {
-        if (handler != null) {
-            handler.onHandshakePacket(session, this);
-        }
+    public int getId() {
+        return this.id;
     }
 
-    public int getProtocol() {
-        return this.protocol;
-    }
-
-    public String getAddress() {
-        return this.address;
-    }
-
-    public int getPort() {
-        return this.port;
-    }
-
-    public int getState() {
-        return this.state;
+    public Buffer getBuffer() {
+        return this.buffer;
     }
 
 }

@@ -22,38 +22,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails;
+package org.poweredrails.rails.log;
 
-import org.poweredrails.rails.log.ConsoleFormatter;
-import org.poweredrails.rails.net.NetworkManager;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Formatter;
+import java.util.logging.LogRecord;
 
-import java.net.InetSocketAddress;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Logger;
+public class ConsoleFormatter extends Formatter {
 
-public class Main {
+    private final String format = "[%s] %s: %s \n";
 
-    private static final Logger logger = Logger.getLogger("Rails");
+    @Override
+    public String format(LogRecord record) {
+        return String.format(this.format, getTime(), record.getLevel(), record.getMessage());
+    }
 
-    /**
-     * <p>
-     *     Starts the Server.
-     * </p>
-     *
-     * @param args boot arguments.
-     */
-    public static void main(String[] args) {
-        ConsoleHandler consoleHandler = new ConsoleHandler();
-        ConsoleFormatter consoleFormatter = new ConsoleFormatter();
-        consoleHandler.setFormatter(consoleFormatter);
-
-        logger.setUseParentHandlers(false);
-        logger.addHandler(consoleHandler);
-
-        logger.info("Starting server...");
-
-        NetworkManager networkManager = new NetworkManager(logger);
-        networkManager.bindTo(new InetSocketAddress("localhost", 25565));
+    private String getTime() {
+        Date date = new Date();
+        DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
+        return dateFormat.format(date);
     }
 
 }

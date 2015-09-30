@@ -22,58 +22,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.net.packet.handshake;
+package org.poweredrails.rails.net.packet.registry;
 
-import org.poweredrails.rails.net.buffer.Buffer;
-import org.poweredrails.rails.net.handler.HandlerRegistry;
-import org.poweredrails.rails.net.handler.handshake.HandshakePacketHandler;
 import org.poweredrails.rails.net.packet.Packet;
-import org.poweredrails.rails.net.session.Session;
 
-import java.util.logging.Logger;
+import java.io.Serializable;
 
-public class PacketReceiveHandshake extends Packet<HandshakePacketHandler> {
+public class PacketFactory implements Serializable {
 
-    private static final long serialVersionUID = 2767186348103136552L;
+    private static final long serialVersionUID = 745266530533878107L;
 
-    private int protocol;
-    private String address;
-    private int port;
-    private int state;
+    private Class<? extends Packet<?>> clazz;
 
-    @Override
-    public void toBuffer(Buffer buffer) {
+    public PacketFactory(Class<? extends Packet<?>> clazz) {
+        this.clazz = clazz;
     }
 
-    @Override
-    public void fromBuffer(Buffer buffer) {
-        this.protocol = buffer.readVarInt();
-        this.address  = buffer.readString();
-        this.port     = buffer.readUnsignedShort();
-        this.state    = buffer.readVarInt();
-    }
-
-    @Override
-    public void handle(Session session, HandshakePacketHandler handler) {
-        if (handler != null) {
-            handler.onHandshakePacket(session, this);
+    public Packet<?> create() {
+        try {
+            return this.clazz.newInstance();
+        } catch (InstantiationException e) {
+            throw new RuntimeException("Failed to create an instance of class: " + this.clazz, e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("Failed to access class: " + this.clazz, e);
         }
-    }
-
-    public int getProtocol() {
-        return this.protocol;
-    }
-
-    public String getAddress() {
-        return this.address;
-    }
-
-    public int getPort() {
-        return this.port;
-    }
-
-    public int getState() {
-        return this.state;
     }
 
 }

@@ -25,35 +25,48 @@
 package org.poweredrails.rails.net.packet;
 
 import org.poweredrails.rails.net.buffer.Buffer;
-import org.poweredrails.rails.net.handler.HandlerRegistry;
 
-public interface Packet {
+import com.google.common.reflect.TypeToken;
+import org.poweredrails.rails.net.session.Session;
 
-    /**
-     * <p>
-     *     Read the packet data from the buffer.
-     * </p>
-     *
-     * @param buf Buffer class to read from.
-     */
-    void fromBuffer(Buffer buf);
+import java.io.Serializable;
 
-    /**
-     * <p>
-     *     Write the packet data to a new buffer and return it.
-     * </p>
-     *
-     * @return New buffer containing serialized data.
-     */
-    Buffer toBuffer();
+public abstract class Packet<T> implements Serializable {
+
+    private static final long serialVersionUID = 7811194516358702773L;
+
+    private final TypeToken<T> token = new TypeToken<T>(getClass()) {
+        private static final long serialVersionUID = 103948516358702773L;
+    };
 
     /**
-     * <p>
-     *     Handle the packet.
-     * </p>
-     *
-     * @param registry Instance of handler registry.
+     * Write packet data to the buffer.
+     * @param buffer packet buffer
      */
-    void handle(HandlerRegistry registry);
+    public abstract void toBuffer(Buffer buffer);
+
+    /**
+     * Read packet data from the buffer.
+     * @param buffer packet buffer
+     */
+    public abstract void fromBuffer(Buffer buffer);
+
+
+
+    /**
+     * Handle this packet's read data.
+     * @param session packet session
+     * @param handler packet handler
+     */
+    public abstract void handle(Session session, T handler);
+
+    /**
+     * Return this packet's handler class.
+     * @return packet handler class
+     */
+    @SuppressWarnings("unchecked")
+    public Class<T> getHandlerClass() {
+        return (Class<T>) this.token.getRawType();
+    }
 
 }

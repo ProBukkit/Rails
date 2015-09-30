@@ -34,7 +34,8 @@ import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import org.poweredrails.rails.net.channel.ServerChannelInitializer;
 import org.poweredrails.rails.net.handler.HandlerRegistry;
-import org.poweredrails.rails.net.packet.PacketRegistry;
+import org.poweredrails.rails.net.packet.registry.PacketRegistry;
+import org.poweredrails.rails.net.session.SessionManager;
 
 import java.net.SocketAddress;
 import java.util.logging.Logger;
@@ -50,6 +51,8 @@ public class NetworkManager {
     private final PacketRegistry packetRegistry = new PacketRegistry();
     private final HandlerRegistry handlerRegistry = new HandlerRegistry();
 
+    private SessionManager sessionManager = new SessionManager();
+
     /**
      * <p>
      *     Initiate the channel.
@@ -58,6 +61,7 @@ public class NetworkManager {
      * @param logger An instance of the server logger.
      */
     public NetworkManager(Logger logger) {
+        
         this.logger = logger;
 
         this.nettyBootstrap
@@ -65,7 +69,8 @@ public class NetworkManager {
                 .channel(NioServerSocketChannel.class)
                 .childOption(ChannelOption.TCP_NODELAY, true)
                 .childOption(ChannelOption.SO_KEEPALIVE, true)
-                .childHandler(new ServerChannelInitializer(this.logger, this.packetRegistry, this.handlerRegistry));
+                .childHandler(new ServerChannelInitializer(
+                        this.logger, this.sessionManager, this.packetRegistry, this.handlerRegistry));
     }
 
     /**
@@ -100,13 +105,13 @@ public class NetworkManager {
     }
 
     private void onBindSuccess(SocketAddress address) {
-        this.logger.info("NetworkManager -> BindSuccess");
+        this.logger.info("[NetworkManager] Bound to address: " + address);
 
         // Call "BindServerEvent"
     }
 
     private void onBindFailure(SocketAddress address, Throwable throwable) {
-        this.logger.info("NetworkManager -> BindFailure");
+        this.logger.info("[NetworkManager] Failed to bind to address: " + address);
 
         // Call "BindServerEvent"
     }

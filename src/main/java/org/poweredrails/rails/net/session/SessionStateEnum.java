@@ -22,38 +22,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails;
+package org.poweredrails.rails.net.session;
 
-import org.poweredrails.rails.log.ConsoleFormatter;
-import org.poweredrails.rails.net.NetworkManager;
+public enum SessionStateEnum {
 
-import java.net.InetSocketAddress;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Logger;
+    HANDSHAKE, STATUS, LOGIN, PLAY;
 
-public class Main {
+    public static SessionStateEnum fromId(int id) {
+        for (SessionStateEnum state : values()) {
+            if (state.ordinal() == id) {
+                return state;
+            }
+        }
 
-    private static final Logger logger = Logger.getLogger("Rails");
-
-    /**
-     * <p>
-     *     Starts the Server.
-     * </p>
-     *
-     * @param args boot arguments.
-     */
-    public static void main(String[] args) {
-        ConsoleHandler consoleHandler = new ConsoleHandler();
-        ConsoleFormatter consoleFormatter = new ConsoleFormatter();
-        consoleHandler.setFormatter(consoleFormatter);
-
-        logger.setUseParentHandlers(false);
-        logger.addHandler(consoleHandler);
-
-        logger.info("Starting server...");
-
-        NetworkManager networkManager = new NetworkManager(logger);
-        networkManager.bindTo(new InetSocketAddress("localhost", 25565));
+        throw new RuntimeException("Failed to find state by id " + id + "!");
     }
 
 }

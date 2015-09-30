@@ -22,20 +22,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.net.packet;
+package org.poweredrails.rails.net.packet.status;
 
-public enum SessionStateEnum {
+import static io.netty.buffer.Unpooled.buffer;
 
-    HANDSHAKE, STATUS, LOGIN, PLAY;
+import org.poweredrails.rails.net.buffer.Buffer;
+import org.poweredrails.rails.net.handler.HandlerRegistry;
+import org.poweredrails.rails.net.handler.status.StatusPacketHandler;
+import org.poweredrails.rails.net.packet.Packet;
+import org.poweredrails.rails.net.session.Session;
 
-    public static SessionStateEnum fromId(int id) {
-        for (SessionStateEnum state : values()) {
-            if (state.ordinal() == id) {
-                return state;
-            }
-        }
+public class PacketSendPong extends Packet<StatusPacketHandler> {
 
-        throw new RuntimeException("Failed to find state by id " + id + "!");
+    private static final long serialVersionUID = -2723965969030497146L;
+
+    private long time;
+
+    public PacketSendPong(long time) {
+        this.time = time;
+    }
+
+    @Override
+    public void toBuffer(Buffer buffer) {
+        buffer.writeLong(this.time);
+    }
+
+    @Override
+    public void fromBuffer(Buffer buffer) {
+
+    }
+
+    @Override
+    public void handle(Session session, StatusPacketHandler handler) {
     }
 
 }

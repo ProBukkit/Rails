@@ -26,15 +26,23 @@ package org.poweredrails.rails.net.packet;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.poweredrails.rails.net.buffer.Buffer;
 import org.poweredrails.rails.net.handler.HandlerRegistry;
+import org.poweredrails.rails.net.packet.registry.PacketFactory;
+import org.poweredrails.rails.net.packet.registry.PacketRegistry;
+import org.poweredrails.rails.net.session.Session;
+import org.poweredrails.rails.net.session.SessionManager;
+import org.poweredrails.rails.net.session.SessionStateEnum;
 
 import java.util.logging.Logger;
 
-public class PacketHandler extends SimpleChannelInboundHandler<Packet> {
+public class PacketHandler extends SimpleChannelInboundHandler<UnresolvedPacket> {
 
     private final Logger logger;
 
-    private HandlerRegistry registry;
+    private PacketRegistry packetRegistry;
+    private HandlerRegistry handlerRegistry;
+    private SessionManager sessionManager;
 
     /**
      * <p>
@@ -42,18 +50,39 @@ public class PacketHandler extends SimpleChannelInboundHandler<Packet> {
      * </p>
      *
      * @param logger An instance of the server logger.
-     * @param registry An instance of the handler registry.
+     * @param sessionManager An instance of the session manager.
+     * @param packetRegistry An instance of the packet registry.
+     * @param handlerRegistry An instance of the handler registry.
      */
-    public PacketHandler(Logger logger, HandlerRegistry registry) {
+    public PacketHandler(Logger logger, SessionManager sessionManager, PacketRegistry packetRegistry,
+                         HandlerRegistry handlerRegistry) {
         this.logger = logger;
-        this.registry = registry;
+        this.sessionManager = sessionManager;
+        this.packetRegistry = packetRegistry;
+        this.handlerRegistry = handlerRegistry;
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Packet packet) throws Exception {
-        this.logger.info("PacketHandler > Handling: " + packet.getClass().getName());
+    public void channelInactive(ChannelHandlerContext ctx) {
+        this.sessionManager.dispose(ctx);
+    }
 
-        packet.handle(this.registry);
+    @Override
+    protected void channelRead0(ChannelHandlerContext ctx, UnresolvedPacket unresolvedPacket) throws Exception {
+        Session session = unresolvedPacket.getSession();
+        SessionStateEnum state = session.getState();
+
+        int id = unresolvedPacket.getId();
+        Buffer buffer = unresolvedPacket.getBuffer();
+
+        PacketFactory factory = this.packetRegistry.find(state, id);
+        if (factory == null) {
+            this.logger.severe("Failed to resolve: unrecognised packet...");
+            return;
+        }
+
+        // Packet<?> packet = factory.create();
+        // packet.fromBuffer(buffer);
     }
 
 }

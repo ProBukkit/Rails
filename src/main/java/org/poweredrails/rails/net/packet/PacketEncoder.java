@@ -27,30 +27,43 @@ package org.poweredrails.rails.net.packet;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
+import org.poweredrails.rails.net.buffer.Buffer;
+import org.poweredrails.rails.net.packet.registry.PacketRegistry;
+import org.poweredrails.rails.net.session.Session;
+import org.poweredrails.rails.net.session.SessionManager;
+import org.poweredrails.rails.net.session.SessionStateEnum;
 
 import java.util.logging.Logger;
 
-public class PacketEncoder extends MessageToByteEncoder<Packet> {
+public class PacketEncoder extends MessageToByteEncoder<Packet<?>> {
 
     private final Logger logger;
+
+    private SessionManager sessionManager;
+    private PacketRegistry registry;
 
     /**
      * <p>
      *     Construct a packet encoder for netty.
      * </p>
-     *
-     * @param logger An instance of the server logger.
      */
-    public PacketEncoder(Logger logger) {
+    public PacketEncoder(Logger logger, SessionManager sessionManager, PacketRegistry registry) {
         this.logger = logger;
+        this.sessionManager = sessionManager;
+        this.registry = registry;
     }
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, Packet packet, ByteBuf out) throws Exception {
-        this.logger.info("PacketEncoder > Encoding: " + packet.getClass().getName());
+    protected void encode(ChannelHandlerContext ctx, Packet<?> packet, ByteBuf buf) throws Exception {
+        Buffer out = new Buffer(buf);
 
-        ByteBuf buf = packet.toBuffer().getByteBuf();
-        out.writeBytes(buf);
+        Session session = this.sessionManager.getSession(ctx);
+        SessionStateEnum state = session.getState();
+
+        int id = this.registry.find(state, packet);
+
+        out.writeVarInt(id);
+        packet.toBuffer(out);
     }
 
 }
