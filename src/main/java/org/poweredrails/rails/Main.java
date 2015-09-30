@@ -24,9 +24,11 @@
  */
 package org.poweredrails.rails;
 
+import org.poweredrails.rails.log.ConsoleFormatter;
 import org.poweredrails.rails.net.NetworkManager;
 
 import java.net.InetSocketAddress;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Logger;
 
 public class Main {
@@ -34,17 +36,21 @@ public class Main {
     private static final Logger logger = Logger.getLogger("Rails");
 
     /**
-     * <p>
-     *     Start the server.
-     * </p>
-     *
-     * @param args Any boot arguments.
+     * Starts the Server.
+     * @param args boot arguments
      */
     public static void main(String[] args) {
+        ConsoleHandler consoleHandler = new ConsoleHandler();
+        ConsoleFormatter consoleFormatter = new ConsoleFormatter();
+        consoleHandler.setFormatter(consoleFormatter);
+
+        logger.setUseParentHandlers(false);
+        logger.addHandler(consoleHandler);
+
         logger.info("Starting server...");
 
-        NetworkManager nm = new NetworkManager(logger);
-        nm.bindTo(new InetSocketAddress("localhost", 25565));
+        NetworkManager networkManager = new NetworkManager(logger);
+        networkManager.bindTo(new InetSocketAddress("localhost", 25565));
     }
 
 }

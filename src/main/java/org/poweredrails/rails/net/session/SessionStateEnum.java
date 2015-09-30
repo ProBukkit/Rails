@@ -22,48 +22,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.net.packet;
+package org.poweredrails.rails.net.session;
 
-import com.google.common.reflect.TypeToken;
-import org.poweredrails.rails.net.buffer.Buffer;
-import org.poweredrails.rails.net.session.Session;
+public enum SessionStateEnum {
 
-import java.io.Serializable;
+    HANDSHAKE, STATUS, LOGIN, PLAY;
 
-public abstract class Packet<T> implements Serializable {
+    public static SessionStateEnum fromId(int id) {
+        for (SessionStateEnum state : values()) {
+            if (state.ordinal() == id) {
+                return state;
+            }
+        }
 
-    private static final long serialVersionUID = 7811194516358702773L;
-
-    private final TypeToken<T> token = new TypeToken<T>(getClass()) {
-        private static final long serialVersionUID = 103948516358702773L;
-    };
-
-    /**
-     * Writes packet data to the buffer.
-     * @param buffer packet buffer
-     */
-    public abstract void toBuffer(Buffer buffer);
-
-    /**
-     * Reads packet data from the buffer.
-     * @param buffer packet buffer
-     */
-    public abstract void fromBuffer(Buffer buffer);
-
-    /**
-     * Handles this packet's read data.
-     * @param session packet session
-     * @param handler packet handler
-     */
-    public abstract void handle(Session session, T handler);
-
-    /**
-     * Returns this packet's handler class.
-     * @return packet handler class
-     */
-    @SuppressWarnings("unchecked")
-    public Class<T> getHandlerClass() {
-        return (Class<T>) this.token.getRawType();
+        throw new RuntimeException("Failed to find state by id " + id + "!");
     }
 
 }

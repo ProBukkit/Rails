@@ -22,58 +22,51 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.net.packet.handshake;
+package org.poweredrails.rails.net.packet.status;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.poweredrails.rails.net.buffer.Buffer;
-import org.poweredrails.rails.net.handler.HandlerRegistry;
-import org.poweredrails.rails.net.handler.handshake.HandshakePacketHandler;
+import org.poweredrails.rails.net.handler.status.StatusPacketHandler;
 import org.poweredrails.rails.net.packet.Packet;
 import org.poweredrails.rails.net.session.Session;
 
-import java.util.logging.Logger;
+public class PacketSendStatusResponse extends Packet<StatusPacketHandler> {
 
-public class PacketReceiveHandshake extends Packet<HandshakePacketHandler> {
+    private static final long serialVersionUID = -6126870628730207287L;
 
-    private static final long serialVersionUID = 2767186348103136552L;
+    private JSONObject json;
 
-    private int protocol;
-    private String address;
-    private int port;
-    private int state;
+    public PacketSendStatusResponse() throws JSONException {
+        this.json = new JSONObject()
+                .put("version", new JSONObject()
+                        .put("name", "1.8.8")
+                        .put("protocol", 47))
+                .put("players", new JSONObject()
+                        .put("max", 100)
+                        .put("online", 5)
+                        .put("sample", new JSONArray()
+                                .put(new JSONObject()
+                                        .put("name", "Bluesocks")
+                                        .put("id", "8652d6de-69bd-4319-8991-065231982198"))))
+                .put("description", new JSONObject()
+                        .put("text", "Hello world"));
+    }
 
     @Override
     public void toBuffer(Buffer buffer) {
+        buffer.writeString(this.json.toString());
     }
 
     @Override
     public void fromBuffer(Buffer buffer) {
-        this.protocol = buffer.readVarInt();
-        this.address  = buffer.readString();
-        this.port     = buffer.readUnsignedShort();
-        this.state    = buffer.readVarInt();
+
     }
 
     @Override
-    public void handle(Session session, HandshakePacketHandler handler) {
-        if (handler != null) {
-            handler.onHandshakePacket(session, this);
-        }
-    }
+    public void handle(Session session, StatusPacketHandler handler) {
 
-    public int getProtocol() {
-        return this.protocol;
-    }
-
-    public String getAddress() {
-        return this.address;
-    }
-
-    public int getPort() {
-        return this.port;
-    }
-
-    public int getState() {
-        return this.state;
     }
 
 }

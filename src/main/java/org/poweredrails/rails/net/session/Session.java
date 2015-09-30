@@ -22,58 +22,69 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.net.packet.handshake;
+package org.poweredrails.rails.net.session;
 
-import org.poweredrails.rails.net.buffer.Buffer;
-import org.poweredrails.rails.net.handler.HandlerRegistry;
-import org.poweredrails.rails.net.handler.handshake.HandshakePacketHandler;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 import org.poweredrails.rails.net.packet.Packet;
-import org.poweredrails.rails.net.session.Session;
 
 import java.util.logging.Logger;
 
-public class PacketReceiveHandshake extends Packet<HandshakePacketHandler> {
+public class Session {
 
-    private static final long serialVersionUID = 2767186348103136552L;
+    private final Logger logger = Logger.getLogger("Rails");
 
-    private int protocol;
+    private Channel channel;
+
     private String address;
     private int port;
-    private int state;
 
-    @Override
-    public void toBuffer(Buffer buffer) {
+    private SessionStateEnum state = SessionStateEnum.HANDSHAKE;
+
+    /**
+     * Creates a new session around the channel handler context, represents the connection between a client
+     * and the server.
+     * @param ctx connection
+     */
+    public Session(ChannelHandlerContext ctx) {
+        this.channel = ctx.channel();
     }
 
-    @Override
-    public void fromBuffer(Buffer buffer) {
-        this.protocol = buffer.readVarInt();
-        this.address  = buffer.readString();
-        this.port     = buffer.readUnsignedShort();
-        this.state    = buffer.readVarInt();
+    /**
+     * Returns the channel handler context for this session.
+     * @return channel
+     */
+    public Channel getChannel() {
+        return this.channel;
     }
 
-    @Override
-    public void handle(Session session, HandshakePacketHandler handler) {
-        if (handler != null) {
-            handler.onHandshakePacket(session, this);
-        }
+    /**
+     * Writes a packet to the handler context, to be sent to the client.
+     * @param packet packet
+     */
+    public void sendPacket(Packet<?> packet) {
+        this.channel.writeAndFlush(packet);
     }
 
-    public int getProtocol() {
-        return this.protocol;
-    }
-
-    public String getAddress() {
-        return this.address;
-    }
-
-    public int getPort() {
-        return this.port;
-    }
-
-    public int getState() {
+    /**
+     * Returns the state for this session.
+     * @return session state
+     */
+    public SessionStateEnum getState() {
         return this.state;
+    }
+
+    /**
+     * Changes the state of this session.
+     * @param state session state
+     */
+    public void setState(SessionStateEnum state) {
+        this.state = state;
+    }
+
+    @Override
+    public String toString() {
+        return this.channel.toString();
     }
 
 }

@@ -22,43 +22,51 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.net.packet;
+package org.poweredrails.rails.net.session;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToByteEncoder;
-import org.poweredrails.rails.net.buffer.Buffer;
-import org.poweredrails.rails.net.packet.registry.PacketRegistry;
-import org.poweredrails.rails.net.session.Session;
-import org.poweredrails.rails.net.session.SessionManager;
-import org.poweredrails.rails.net.session.SessionStateEnum;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Logger;
 
-public class PacketEncoder extends MessageToByteEncoder<Packet<?>> {
+public class SessionManager {
 
-    private final Logger logger;
+    private final Logger logger = Logger.getLogger("Rails");
 
-    private SessionManager sessionManager;
-    private PacketRegistry registry;
+    private List<Session> sessionList = new ArrayList<>();
 
-    public PacketEncoder(Logger logger, SessionManager sessionManager, PacketRegistry registry) {
-        this.logger = logger;
-        this.sessionManager = sessionManager;
-        this.registry = registry;
+    /**
+     * Gets an instance of the session for the connection it relates to.
+     * @param ctx connection
+     * @return session
+     */
+    public Session getSession(ChannelHandlerContext ctx) {
+        for (Session session : this.sessionList) {
+            if (session.getChannel().equals(ctx.channel())) {
+                return session;
+            }
+        }
+
+        Session session = new Session(ctx);
+        this.sessionList.add(session);
+        return session;
     }
 
-    @Override
-    protected void encode(ChannelHandlerContext ctx, Packet<?> packet, ByteBuf buf) throws Exception {
-        Buffer out = new Buffer(buf);
+    /**
+     * Disposes of any sessions relating to this connection.
+     * @param ctx connection
+     */
+    public void dispose(ChannelHandlerContext ctx) {
+        Iterator<Session> it = this.sessionList.iterator();
 
-        Session session = this.sessionManager.getSession(ctx);
-        SessionStateEnum state = session.getState();
-
-        int id = this.registry.find(state, packet);
-
-        out.writeVarInt(id);
-        packet.toBuffer(out);
+        while (it.hasNext()) {
+            Session session = it.next();
+            if (session.getChannel().equals(ctx.channel())) {
+                it.remove();
+            }
+        }
     }
 
 }

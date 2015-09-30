@@ -24,23 +24,37 @@
  */
 package org.poweredrails.rails.net.handler.handshake;
 
-import org.poweredrails.rails.net.packet.handshake.PacketReceiveHandshake;
+        import org.poweredrails.rails.net.packet.handshake.PacketReceiveHandshake;
+        import org.poweredrails.rails.net.packet.login.PacketSendDisconnect;
+        import org.poweredrails.rails.net.session.Session;
+        import org.poweredrails.rails.net.session.SessionStateEnum;
 
-import java.util.logging.Logger;
+        import java.util.logging.Logger;
 
 public class HandshakePacketHandler {
 
     private final Logger logger = Logger.getLogger("Rails");
 
     /**
-     * <p>
-     *     Handle a PacketReceiveHandshake packet.
-     * </p>
-     *
-     * @param packet An instance of the packet to be handled.
+     * Handles a handshake packet.
+     * @param session sender
+     * @param packet handshake packet
      */
-    public void onHandshakePacket(PacketReceiveHandshake packet) {
-        this.logger.info("HandshakeHandler > Received HandshakePacket! Hurray!");
+    public void onHandshakePacket(Session session, PacketReceiveHandshake packet) {
+        SessionStateEnum state = SessionStateEnum.fromId(packet.getState());
+        session.setState(state);
+
+        String address = packet.getAddress();
+        int port = packet.getPort();
+
+        this.logger.info(String.format("Client [%s:%s] connecting...", address, port));
+
+        int protocol = packet.getProtocol();
+
+        if (protocol != 47) {
+            session.sendPacket( new PacketSendDisconnect("We don't support that protocol, sorry. (" + protocol + ")") );
+            this.logger.info("Session " + session + " was kicked - outdated protocol.");
+        }
     }
 
 }

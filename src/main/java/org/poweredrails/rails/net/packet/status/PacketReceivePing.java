@@ -22,43 +22,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.net.packet;
+package org.poweredrails.rails.net.packet.status;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToByteEncoder;
 import org.poweredrails.rails.net.buffer.Buffer;
-import org.poweredrails.rails.net.packet.registry.PacketRegistry;
+import org.poweredrails.rails.net.handler.HandlerRegistry;
+import org.poweredrails.rails.net.handler.status.StatusPacketHandler;
+import org.poweredrails.rails.net.packet.Packet;
 import org.poweredrails.rails.net.session.Session;
-import org.poweredrails.rails.net.session.SessionManager;
-import org.poweredrails.rails.net.session.SessionStateEnum;
 
-import java.util.logging.Logger;
+public class PacketReceivePing extends Packet<StatusPacketHandler> {
 
-public class PacketEncoder extends MessageToByteEncoder<Packet<?>> {
+    private static final long serialVersionUID = -3569249616863264576L;
 
-    private final Logger logger;
+    private long time;
 
-    private SessionManager sessionManager;
-    private PacketRegistry registry;
+    @Override
+    public void toBuffer(Buffer buffer) {
 
-    public PacketEncoder(Logger logger, SessionManager sessionManager, PacketRegistry registry) {
-        this.logger = logger;
-        this.sessionManager = sessionManager;
-        this.registry = registry;
     }
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, Packet<?> packet, ByteBuf buf) throws Exception {
-        Buffer out = new Buffer(buf);
+    public void fromBuffer(Buffer buffer) {
+        this.time = buffer.readLong();
+    }
 
-        Session session = this.sessionManager.getSession(ctx);
-        SessionStateEnum state = session.getState();
+    @Override
+    public void handle(Session session, StatusPacketHandler handler) {
+        if (handler != null) {
+            handler.onPingPacket(session, this);
+        }
+    }
 
-        int id = this.registry.find(state, packet);
-
-        out.writeVarInt(id);
-        packet.toBuffer(out);
+    public long getTime() {
+        return this.time;
     }
 
 }

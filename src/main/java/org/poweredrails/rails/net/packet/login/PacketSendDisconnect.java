@@ -22,43 +22,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.net.packet;
+package org.poweredrails.rails.net.packet.login;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToByteEncoder;
 import org.poweredrails.rails.net.buffer.Buffer;
-import org.poweredrails.rails.net.packet.registry.PacketRegistry;
+import org.poweredrails.rails.net.handler.HandlerRegistry;
+import org.poweredrails.rails.net.handler.login.LoginPacketHandler;
+import org.poweredrails.rails.net.packet.Packet;
 import org.poweredrails.rails.net.session.Session;
-import org.poweredrails.rails.net.session.SessionManager;
-import org.poweredrails.rails.net.session.SessionStateEnum;
 
-import java.util.logging.Logger;
+public class PacketSendDisconnect extends Packet<LoginPacketHandler> {
 
-public class PacketEncoder extends MessageToByteEncoder<Packet<?>> {
+    private static final long serialVersionUID = 6223476178758093139L;
 
-    private final Logger logger;
+    private String reason;
 
-    private SessionManager sessionManager;
-    private PacketRegistry registry;
-
-    public PacketEncoder(Logger logger, SessionManager sessionManager, PacketRegistry registry) {
-        this.logger = logger;
-        this.sessionManager = sessionManager;
-        this.registry = registry;
+    public PacketSendDisconnect(String reason) {
+        this.reason = reason;
     }
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, Packet<?> packet, ByteBuf buf) throws Exception {
-        Buffer out = new Buffer(buf);
+    public void toBuffer(Buffer buffer) {
+        buffer.writeString(this.reason);
+    }
 
-        Session session = this.sessionManager.getSession(ctx);
-        SessionStateEnum state = session.getState();
+    @Override
+    public void fromBuffer(Buffer buffer) {
 
-        int id = this.registry.find(state, packet);
+    }
 
-        out.writeVarInt(id);
-        packet.toBuffer(out);
+    @Override
+    public void handle(Session session, LoginPacketHandler handler) {
+
     }
 
 }

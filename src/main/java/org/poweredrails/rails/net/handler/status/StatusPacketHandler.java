@@ -22,43 +22,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.net.packet;
+package org.poweredrails.rails.net.handler.status;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToByteEncoder;
-import org.poweredrails.rails.net.buffer.Buffer;
-import org.poweredrails.rails.net.packet.registry.PacketRegistry;
+import org.json.JSONException;
+import org.poweredrails.rails.net.packet.status.PacketReceivePing;
+import org.poweredrails.rails.net.packet.status.PacketReceiveStatusRequest;
+import org.poweredrails.rails.net.packet.status.PacketSendPong;
+import org.poweredrails.rails.net.packet.status.PacketSendStatusResponse;
 import org.poweredrails.rails.net.session.Session;
-import org.poweredrails.rails.net.session.SessionManager;
-import org.poweredrails.rails.net.session.SessionStateEnum;
 
 import java.util.logging.Logger;
 
-public class PacketEncoder extends MessageToByteEncoder<Packet<?>> {
+public class StatusPacketHandler {
 
-    private final Logger logger;
+    private final Logger logger = Logger.getLogger("Rails");
 
-    private SessionManager sessionManager;
-    private PacketRegistry registry;
+    /**
+     * Handles a status request packet.
+     * @param session sender
+     * @param packet status request packet
+     * @throws JSONException if the
+     */
+    public void onStatusRequestPacket(Session session, PacketReceiveStatusRequest packet) throws JSONException {
+        PacketSendStatusResponse response = new PacketSendStatusResponse();
+        session.sendPacket(response);
 
-    public PacketEncoder(Logger logger, SessionManager sessionManager, PacketRegistry registry) {
-        this.logger = logger;
-        this.sessionManager = sessionManager;
-        this.registry = registry;
+        this.logger.info("Responded to a status request.");
     }
 
-    @Override
-    protected void encode(ChannelHandlerContext ctx, Packet<?> packet, ByteBuf buf) throws Exception {
-        Buffer out = new Buffer(buf);
-
-        Session session = this.sessionManager.getSession(ctx);
-        SessionStateEnum state = session.getState();
-
-        int id = this.registry.find(state, packet);
-
-        out.writeVarInt(id);
-        packet.toBuffer(out);
+    /**
+     * Handles a ping packet.
+     * @param session sender
+     * @param packet ping packet
+     */
+    public void onPingPacket(Session session, PacketReceivePing packet) {
+        PacketSendPong response = new PacketSendPong(packet.getTime());
+        session.sendPacket(response);
     }
 
 }

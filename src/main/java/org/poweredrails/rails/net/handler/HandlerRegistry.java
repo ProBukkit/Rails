@@ -25,6 +25,10 @@
 package org.poweredrails.rails.net.handler;
 
 import org.poweredrails.rails.net.handler.handshake.HandshakePacketHandler;
+import org.poweredrails.rails.net.handler.login.LoginPacketHandler;
+import org.poweredrails.rails.net.handler.status.StatusPacketHandler;
+import org.poweredrails.rails.net.packet.Packet;
+import org.poweredrails.rails.net.session.Session;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,22 +38,34 @@ public class HandlerRegistry {
     private List<Object> handlerList = new ArrayList<>();
 
     /**
-     * <p>
-     *     Register any packet handlers.
-     * </p>
+     * Registers any packet handlers.
      */
     public HandlerRegistry() {
         this.handlerList.add(new HandshakePacketHandler());
+        this.handlerList.add(new StatusPacketHandler());
+        this.handlerList.add(new LoginPacketHandler());
     }
 
     /**
-     * <p>
-     *     Return the handler instance registered by that class.
-     * </p>
-     *
-     * @param clazz Class of the handler.
-     * @param <T> The type of the handler.
-     * @return An instance of the handler, or null if unregistered.
+     * Calls the handle method on a packet.
+     * @param <T> handler type
+     * @param session session
+     * @param packet packet
+     */
+    public <T> void onHandle(Session session, Packet<T> packet) {
+        Class<T> clazz = packet.getHandlerClass();
+        T handler = this.getHandler(clazz);
+
+        if (handler != null) {
+            packet.handle(session, handler);
+        }
+    }
+
+    /**
+     * Returns the handler instance registered by that class.
+     * @param clazz handler class
+     * @param <T> handler type
+     * @return handler instance
      */
     @SuppressWarnings("unchecked")
     public <T> T getHandler(Class<T> clazz) {

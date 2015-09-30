@@ -34,7 +34,8 @@ import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import org.poweredrails.rails.net.channel.ServerChannelInitializer;
 import org.poweredrails.rails.net.handler.HandlerRegistry;
-import org.poweredrails.rails.net.packet.PacketRegistry;
+import org.poweredrails.rails.net.packet.registry.PacketRegistry;
+import org.poweredrails.rails.net.session.SessionManager;
 
 import java.net.SocketAddress;
 import java.util.logging.Logger;
@@ -50,13 +51,8 @@ public class NetworkManager {
     private final PacketRegistry packetRegistry = new PacketRegistry();
     private final HandlerRegistry handlerRegistry = new HandlerRegistry();
 
-    /**
-     * <p>
-     *     Initiate the channel.
-     * </p>
-     *
-     * @param logger An instance of the server logger.
-     */
+    private SessionManager sessionManager = new SessionManager();
+
     public NetworkManager(Logger logger) {
         this.logger = logger;
 
@@ -65,16 +61,14 @@ public class NetworkManager {
                 .channel(NioServerSocketChannel.class)
                 .childOption(ChannelOption.TCP_NODELAY, true)
                 .childOption(ChannelOption.SO_KEEPALIVE, true)
-                .childHandler(new ServerChannelInitializer(this.logger, this.packetRegistry, this.handlerRegistry));
+                .childHandler(new ServerChannelInitializer(
+                        this.logger, this.sessionManager, this.packetRegistry, this.handlerRegistry));
     }
 
     /**
-     * <p>
-     *     Bind the channel to the provided address.
-     * </p>
-     *
-     * @param socketAddress The address to bind the channel to.
-     * @return The result of the binding.
+     * Binds the channel to the provided address.
+     * @param socketAddress address to bind to
+     * @return result
      */
     public ChannelFuture bindTo(final SocketAddress socketAddress) {
         return this.nettyBootstrap.bind(socketAddress).addListener(new GenericFutureListener<Future<? super Void>>() {
@@ -90,9 +84,7 @@ public class NetworkManager {
     }
 
     /**
-     * <p>
-     *     Shutdown the channel gracefully.
-     * </p>
+     * Shuts down the channel gracefully.
      */
     public void shutdown() {
         this.nettyWorkerGroup.shutdownGracefully();
@@ -100,13 +92,13 @@ public class NetworkManager {
     }
 
     private void onBindSuccess(SocketAddress address) {
-        this.logger.info("NetworkManager -> BindSuccess");
+        this.logger.info("[NetworkManager] Bound to address: " + address);
 
         // Call "BindServerEvent"
     }
 
     private void onBindFailure(SocketAddress address, Throwable throwable) {
-        this.logger.info("NetworkManager -> BindFailure");
+        this.logger.info("[NetworkManager] Failed to bind to address: " + address);
 
         // Call "BindServerEvent"
     }

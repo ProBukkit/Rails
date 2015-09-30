@@ -22,43 +22,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.net.packet;
+package org.poweredrails.rails.log;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToByteEncoder;
-import org.poweredrails.rails.net.buffer.Buffer;
-import org.poweredrails.rails.net.packet.registry.PacketRegistry;
-import org.poweredrails.rails.net.session.Session;
-import org.poweredrails.rails.net.session.SessionManager;
-import org.poweredrails.rails.net.session.SessionStateEnum;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Formatter;
+import java.util.logging.LogRecord;
 
-import java.util.logging.Logger;
+public class ConsoleFormatter extends Formatter {
 
-public class PacketEncoder extends MessageToByteEncoder<Packet<?>> {
-
-    private final Logger logger;
-
-    private SessionManager sessionManager;
-    private PacketRegistry registry;
-
-    public PacketEncoder(Logger logger, SessionManager sessionManager, PacketRegistry registry) {
-        this.logger = logger;
-        this.sessionManager = sessionManager;
-        this.registry = registry;
-    }
+    private final String format = "[%s] %s: %s \n";
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, Packet<?> packet, ByteBuf buf) throws Exception {
-        Buffer out = new Buffer(buf);
+    public String format(LogRecord record) {
+        return String.format(this.format, getTime(), record.getLevel(), record.getMessage());
+    }
 
-        Session session = this.sessionManager.getSession(ctx);
-        SessionStateEnum state = session.getState();
-
-        int id = this.registry.find(state, packet);
-
-        out.writeVarInt(id);
-        packet.toBuffer(out);
+    private String getTime() {
+        Date date = new Date();
+        DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
+        return dateFormat.format(date);
     }
 
 }

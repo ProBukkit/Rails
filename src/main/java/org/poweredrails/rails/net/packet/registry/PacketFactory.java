@@ -22,43 +22,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.net.packet;
+package org.poweredrails.rails.net.packet.registry;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToByteEncoder;
-import org.poweredrails.rails.net.buffer.Buffer;
-import org.poweredrails.rails.net.packet.registry.PacketRegistry;
-import org.poweredrails.rails.net.session.Session;
-import org.poweredrails.rails.net.session.SessionManager;
-import org.poweredrails.rails.net.session.SessionStateEnum;
+import org.poweredrails.rails.net.packet.Packet;
 
-import java.util.logging.Logger;
+import java.io.Serializable;
 
-public class PacketEncoder extends MessageToByteEncoder<Packet<?>> {
+public class PacketFactory implements Serializable {
 
-    private final Logger logger;
+    private static final long serialVersionUID = 745266530533878107L;
 
-    private SessionManager sessionManager;
-    private PacketRegistry registry;
+    private Class<? extends Packet<?>> clazz;
 
-    public PacketEncoder(Logger logger, SessionManager sessionManager, PacketRegistry registry) {
-        this.logger = logger;
-        this.sessionManager = sessionManager;
-        this.registry = registry;
+    public PacketFactory(Class<? extends Packet<?>> clazz) {
+        this.clazz = clazz;
     }
 
-    @Override
-    protected void encode(ChannelHandlerContext ctx, Packet<?> packet, ByteBuf buf) throws Exception {
-        Buffer out = new Buffer(buf);
-
-        Session session = this.sessionManager.getSession(ctx);
-        SessionStateEnum state = session.getState();
-
-        int id = this.registry.find(state, packet);
-
-        out.writeVarInt(id);
-        packet.toBuffer(out);
+    public Packet<?> create() {
+        try {
+            return this.clazz.newInstance();
+        } catch (InstantiationException e) {
+            throw new RuntimeException("Failed to create an instance of class: " + this.clazz, e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("Failed to access class: " + this.clazz, e);
+        }
     }
 
 }

@@ -22,43 +22,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.net.packet;
+package org.poweredrails.rails.net.handler.login;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToByteEncoder;
-import org.poweredrails.rails.net.buffer.Buffer;
-import org.poweredrails.rails.net.packet.registry.PacketRegistry;
+import org.poweredrails.rails.net.packet.login.PacketReceiveLoginStart;
 import org.poweredrails.rails.net.session.Session;
-import org.poweredrails.rails.net.session.SessionManager;
-import org.poweredrails.rails.net.session.SessionStateEnum;
 
 import java.util.logging.Logger;
 
-public class PacketEncoder extends MessageToByteEncoder<Packet<?>> {
+public class LoginPacketHandler {
 
-    private final Logger logger;
+    private final Logger logger = Logger.getLogger("Rails");
 
-    private SessionManager sessionManager;
-    private PacketRegistry registry;
-
-    public PacketEncoder(Logger logger, SessionManager sessionManager, PacketRegistry registry) {
-        this.logger = logger;
-        this.sessionManager = sessionManager;
-        this.registry = registry;
-    }
-
-    @Override
-    protected void encode(ChannelHandlerContext ctx, Packet<?> packet, ByteBuf buf) throws Exception {
-        Buffer out = new Buffer(buf);
-
-        Session session = this.sessionManager.getSession(ctx);
-        SessionStateEnum state = session.getState();
-
-        int id = this.registry.find(state, packet);
-
-        out.writeVarInt(id);
-        packet.toBuffer(out);
+    /**
+     * Handles a login start packet.
+     * @param session sender
+     * @param packet login start packet
+     */
+    public void onLoginStart(Session session, PacketReceiveLoginStart packet) {
+        this.logger.info("Session " + session + " starting login (" + packet.getName() + ")");
     }
 
 }

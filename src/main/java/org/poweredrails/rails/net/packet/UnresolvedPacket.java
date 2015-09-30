@@ -24,41 +24,32 @@
  */
 package org.poweredrails.rails.net.packet;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToByteEncoder;
 import org.poweredrails.rails.net.buffer.Buffer;
-import org.poweredrails.rails.net.packet.registry.PacketRegistry;
 import org.poweredrails.rails.net.session.Session;
-import org.poweredrails.rails.net.session.SessionManager;
-import org.poweredrails.rails.net.session.SessionStateEnum;
 
-import java.util.logging.Logger;
+public class UnresolvedPacket {
 
-public class PacketEncoder extends MessageToByteEncoder<Packet<?>> {
+    private Session session;
 
-    private final Logger logger;
+    private int id;
+    private Buffer buffer;
 
-    private SessionManager sessionManager;
-    private PacketRegistry registry;
-
-    public PacketEncoder(Logger logger, SessionManager sessionManager, PacketRegistry registry) {
-        this.logger = logger;
-        this.sessionManager = sessionManager;
-        this.registry = registry;
+    public UnresolvedPacket(Session session, int id, Buffer buffer) {
+        this.session = session;
+        this.id = id;
+        this.buffer = buffer;
     }
 
-    @Override
-    protected void encode(ChannelHandlerContext ctx, Packet<?> packet, ByteBuf buf) throws Exception {
-        Buffer out = new Buffer(buf);
+    public Session getSession() {
+        return this.session;
+    }
 
-        Session session = this.sessionManager.getSession(ctx);
-        SessionStateEnum state = session.getState();
+    public int getId() {
+        return this.id;
+    }
 
-        int id = this.registry.find(state, packet);
-
-        out.writeVarInt(id);
-        packet.toBuffer(out);
+    public Buffer getBuffer() {
+        return this.buffer;
     }
 
 }

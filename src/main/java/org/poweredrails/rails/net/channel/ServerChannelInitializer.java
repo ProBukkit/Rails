@@ -28,10 +28,12 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import org.poweredrails.rails.net.handler.HandlerRegistry;
+import org.poweredrails.rails.net.packet.PacketCompressor;
 import org.poweredrails.rails.net.packet.PacketDecoder;
 import org.poweredrails.rails.net.packet.PacketEncoder;
 import org.poweredrails.rails.net.packet.PacketHandler;
-import org.poweredrails.rails.net.packet.PacketRegistry;
+import org.poweredrails.rails.net.packet.registry.PacketRegistry;
+import org.poweredrails.rails.net.session.SessionManager;
 
 import java.util.logging.Logger;
 
@@ -42,17 +44,19 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
     private final PacketRegistry packetRegistry;
     private final HandlerRegistry handlerRegistry;
 
+    private SessionManager sessionManager;
+
     /**
-     * <p>
-     *     Create a new server channel initializer, injecting the packet and handler registries.
-     * </p>
-     *
-     * @param logger An instance of the server logger.
-     * @param packetRegistry An instance of the packet registry.
-     * @param handlerRegistry An instance of the handler registry.
+     * Creates a new server channel initializer.
+     * @param logger logger
+     * @param sessionManager session manager
+     * @param packetRegistry packet registry
+     * @param handlerRegistry handler registry
      */
-    public ServerChannelInitializer(Logger logger, PacketRegistry packetRegistry, HandlerRegistry handlerRegistry) {
+    public ServerChannelInitializer(Logger logger, SessionManager sessionManager, PacketRegistry packetRegistry,
+                                    HandlerRegistry handlerRegistry) {
         this.logger = logger;
+        this.sessionManager = sessionManager;
         this.packetRegistry = packetRegistry;
         this.handlerRegistry = handlerRegistry;
     }
@@ -60,9 +64,11 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
     @Override
     protected final void initChannel(SocketChannel socketChannel) {
         ChannelPipeline pl = socketChannel.pipeline();
-        pl.addLast("decoder", new PacketDecoder(this.logger, this.packetRegistry));
-        pl.addLast("encoder", new PacketEncoder(this.logger));
-        pl.addLast("handler", new PacketHandler(this.logger, this.handlerRegistry));
+        pl.addLast("compressor", new PacketCompressor());
+        pl.addLast("decoder", new PacketDecoder(this.logger, this.sessionManager, this.packetRegistry));
+        pl.addLast("encoder", new PacketEncoder(this.logger, this.sessionManager, this.packetRegistry));
+        pl.addLast("handler", new PacketHandler(this.logger, this.sessionManager, this.packetRegistry,
+                this.handlerRegistry));
     }
 
 }
