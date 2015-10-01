@@ -35,6 +35,14 @@ public class Main {
 
     private static final Logger logger = Logger.getLogger("Rails");
 
+    protected Main(NetworkManager networkManager) {
+        this(networkManager, "localhost", 25565);
+    }
+
+    protected Main(NetworkManager networkManager, String host, int port) {
+        networkManager.bindTo(new InetSocketAddress(host, port));
+    }
+
     /**
      * Starts the Server.
      * @param args boot arguments
@@ -50,7 +58,7 @@ public class Main {
         logger.info("Starting server...");
 
         NetworkManager networkManager = new NetworkManager(logger);
-        networkManager.bindTo(new InetSocketAddress("localhost", 25565));
+        new Main(networkManager);
     }
 
 }
