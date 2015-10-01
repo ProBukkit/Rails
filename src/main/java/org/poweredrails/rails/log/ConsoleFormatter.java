@@ -32,7 +32,7 @@ import java.util.logging.LogRecord;
 
 public class ConsoleFormatter extends Formatter {
 
-    private final String format = "[%s] %s: %s \n";
+    private final String format = "[%s] %s: %s \n"; //Can be assigned as local variable
 
     @Override
     public String format(LogRecord record) {

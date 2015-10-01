@@ -71,14 +71,11 @@ public class NetworkManager {
      * @return result
      */
     public ChannelFuture bindTo(final SocketAddress socketAddress) {
-        return this.nettyBootstrap.bind(socketAddress).addListener(new GenericFutureListener<Future<? super Void>>() {
-            @Override
-            public void operationComplete(Future<? super Void> f) throws Exception {
-                if (f.isSuccess()) {
-                    onBindSuccess(socketAddress);
-                } else {
-                    onBindFailure(socketAddress, f.cause());
-                }
+        return this.nettyBootstrap.bind(socketAddress).addListener(f -> {
+            if (f.isSuccess()) {
+                onBindSuccess(socketAddress);
+            } else {
+                onBindFailure(socketAddress, f.cause());
             }
         });
     }
