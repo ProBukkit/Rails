@@ -12,9 +12,9 @@ The goal is to have a server not based off or on top of Mojang's proprietary Min
 
 ## Contributing
 Are you a developer looking to contribute some code? We'd love the help!
-* First fork the repo and make changes, making sure those changes follow [our guidelines][contrib].
+* Fork the repo and make changes, making sure those changes follow [our guidelines][contrib].
 * Open a pull request with your changes.
-* Once your pull request is reviewed by a contributor it will be merged.
+* Once your pull request is reviewed by a collaborator it will be merged.
 
 See the [`CONTRIBUTING.md`][contrib] file for more information on how to contribute to Rails.
 
