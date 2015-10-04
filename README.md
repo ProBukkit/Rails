@@ -1,5 +1,7 @@
-Rails [![Status][travis-badge]][travis] [![Chat at http://gitter.im/PoweredRails/Rails][gitter-badge]][gitter]
-=================
+Rails
+=====
+
+[![Status][travis-badge]][travis] [![Chat at http://gitter.im/PoweredRails/Rails][gitter-badge]][gitter]
 
 <img hspace='25' align="right" src="https://avatars2.githubusercontent.com/u/12877088?s=200">
 
