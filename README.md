@@ -11,14 +11,11 @@ The goal is to have a server not based off or on top of Mojang's proprietary Min
 
  * Status: __Pre-alpha__
 
-## General Information
-* Rails builds with [Java 8].
-
 ## Contributing
 Are you a developer looking to contribute some code? We'd love the help!
 * First fork the repo and make changes, making sure those changes follow [our guidelines](CONTRIBUTING.MD).
 * Open a pull request with your changes.
-* Once your pull request is reviewed by a contributor (making sure it follows our guidelines) it will be merged.
+* Once your pull request is reviewed by a contributor it will be merged.
 
 [MIT license]: https://opensource.org/licenses/MIT
 [Java 8]: http://www.oracle.com/technetwork/java/javase/overview/java8-2100321.html
