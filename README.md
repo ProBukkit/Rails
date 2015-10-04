@@ -12,9 +12,11 @@ The goal is to have a server not based off or on top of Mojang's proprietary Min
 
 ## Contributing
 Are you a developer looking to contribute some code? We'd love the help!
-* First fork the repo and make changes, making sure those changes follow [our guidelines](CONTRIBUTING.MD).
+* First fork the repo and make changes, making sure those changes follow [our guidelines][contrib].
 * Open a pull request with your changes.
 * Once your pull request is reviewed by a contributor it will be merged.
+
+See the [`CONTRIBUTING.md`][contrib] file for more information on how to contribute to Rails.
 
 [MIT license]: https://opensource.org/licenses/MIT
 [Java 8]: http://www.oracle.com/technetwork/java/javase/overview/java8-2100321.html
@@ -23,3 +25,4 @@ Are you a developer looking to contribute some code? We'd love the help!
 [travis]: https://travis-ci.org/PoweredRails/Rails
 [travis-badge]: https://travis-ci.org/PoweredRails/Rails.svg?branch=master
 [rails-title]: https://avatars2.githubusercontent.com/u/12877088?s=75
+[contrib]: CONTRIBUTING.MD
