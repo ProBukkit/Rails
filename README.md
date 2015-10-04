@@ -1,9 +1,8 @@
 Rails
 =====
+<img hspace='25' align="right" src="https://avatars2.githubusercontent.com/u/12877088?s=200">
 
 [![Status][travis-badge]][travis] [![Chat at http://gitter.im/PoweredRails/Rails][gitter-badge]][gitter]
-
-<img hspace='25' align="right" src="https://avatars2.githubusercontent.com/u/12877088?s=200">
 
 Rails is a open source, free, and independent Minecraft server platform designed with [Java 8] and licensed under the [MIT license]. 
 
