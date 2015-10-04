@@ -1,18 +1,25 @@
-Powered Rails [![Build Status](https://travis-ci.org/PoweredRails/Rails.svg?branch=master)](https://travis-ci.org/PoweredRails/Rails) [![Join the chat at https://gitter.im/PoweredRails/Rails](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/PoweredRails/Rails?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-=================
+Rails
+=====
+<img hspace='25' vspace='25' align="right" src="https://avatars2.githubusercontent.com/u/12877088?s=200">
 
-The official repository for Rails. It is licensed under the [MIT License]. 
+[![Status][travis-badge]][travis] [![Chat at http://gitter.im/PoweredRails/Rails][gitter-badge]][gitter]
 
-## General Information
-* Rails is set to build with [Java 8] 
-* Development Status: **Planning & Developing**
+Rails is a open source, free, and independent Minecraft server platform designed with [Java 8] and licensed under the [MIT license]. 
+
+The goal is to have a server not based off or on top of Mojang's proprietary Minecraft server, and therefore making it not longer bound to Mojang's terms.
+
+ * Status: __Pre-alpha__
 
 ## Contributing
 Are you a developer looking to contribute some code? We'd love the help!
-* Fork the repo and make changes
-* Open a pull request with your changes, following our [guidelines](CONTRIBUTING.MD).
-* Please follow the above guidelines and requirements for your pull request(s) to be accepted.
+* First fork the repo and make changes, making sure those changes follow [our guidelines](CONTRIBUTING.MD).
+* Open a pull request with your changes.
+* Once your pull request is reviewed by a contributor it will be merged.
 
-[MIT License]: https://opensource.org/licenses/MIT
-[API]: https://github.com/PoweredRails/RailsAPI/
+[MIT license]: https://opensource.org/licenses/MIT
 [Java 8]: http://www.oracle.com/technetwork/java/javase/overview/java8-2100321.html
+[gitter]: https://gitter.im/PoweredRails/Rails
+[gitter-badge]: https://badges.gitter.im/Join%20Chat.svg
+[travis]: https://travis-ci.org/PoweredRails/Rails
+[travis-badge]: https://travis-ci.org/PoweredRails/Rails.svg?branch=master
+[rails-title]: https://avatars2.githubusercontent.com/u/12877088?s=75
