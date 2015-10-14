@@ -52,10 +52,10 @@ public final class Tasks {
     }
 
     /**
-     * Assigns a passed in runnable instance to a scheduled future task.
+     * Assigns a passed in {@link Runnable} instance to a {@link ScheduledFuture} task.
      *
-     * @param runnable Runnable that is being assigned to the future task.
-     * @return Future task instance.
+     * @param runnable {@link Runnable} that is being assigned to a {@link ScheduledFuture} task.
+     * @return {@link ScheduledFuture} instance.
      */
     public ScheduledFuture<?> runTask(Runnable runnable) {
         ScheduledFuture<?> future = scheduledExecutorService.schedule(runnable, 0, TimeUnit.SECONDS);
@@ -64,12 +64,12 @@ public final class Tasks {
     }
 
     /**
-     * Assigns a passed in runnable instance to a scheduled future task.
+     * Assigns a passed in {@link Runnable} instance to a {@link ScheduledFuture} task.
      * Delay is calculated in seconds.
      *
-     * @param runnable Runnable that is being assigned to the future task.
+     * @param runnable {@link Runnable} that is being assigned to a {@link ScheduledFuture} task.
      * @param delay The delay before the final task execution.
-     * @return Future task instance.
+     * @return {@link ScheduledFuture} instance.
      */
     public ScheduledFuture<?> runDelayedTask(Runnable runnable, long delay) {
         ScheduledFuture<?> future = scheduledExecutorService.schedule(runnable, delay, TimeUnit.SECONDS);
@@ -78,10 +78,12 @@ public final class Tasks {
     }
 
     /**
-     * @param runnable Runnable that is being assigned to the future task.
+     * Assigns a passed in {@link Runnable} instance to a {@link ScheduledFuture} task.
+     *
+     * @param runnable {@link Runnable} that is being assigned to a {@link ScheduledFuture} task.
      * @param repeat The delay between one task execution and the following execution.
      * @param delay The delay before the task start.
-     * @return Future task instance.
+     * @return {@link ScheduledFuture} instance.
      */
     public ScheduledFuture<?> runRepeatingTask(Runnable runnable, long repeat, long delay) {
         ScheduledFuture<?> future = scheduledExecutorService.scheduleWithFixedDelay(runnable, repeat, delay, TimeUnit.SECONDS);
@@ -90,8 +92,9 @@ public final class Tasks {
     }
 
     /**
-     * Terminates all scheduled tasks. If a task is in progress, it will not be interrupted/canceled.
-     * The system waits 2 seconds to cancel every scheduled task.
+     * Terminates all {@link ScheduledFuture} tasks.
+     * <p>If a task is in progress, it will not be interrupted/canceled.
+     * The system waits 2 seconds to cancel every scheduled task.</p>
      */
     public void terminateAllTasks() {
         tasks.forEach(task -> task.cancel(false));
