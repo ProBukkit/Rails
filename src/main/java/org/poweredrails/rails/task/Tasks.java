@@ -32,17 +32,18 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 public final class Tasks {
 
+    private static Tasks instance;
     private ScheduledExecutorService scheduledExecutorService;
     private List<ScheduledFuture<?>> tasks;
 
     private Tasks() {
-        scheduledExecutorService = Executors.newScheduledThreadPool(10);
-        tasks = new ArrayList<>();
+        this.scheduledExecutorService = Executors.newScheduledThreadPool(10);
+        this.tasks = new ArrayList<>();
     }
-
-    private static Tasks instance;
 
     public static Tasks getInstance() {
         if (instance == null) {
@@ -58,8 +59,8 @@ public final class Tasks {
      * @return {@link ScheduledFuture} instance.
      */
     public ScheduledFuture<?> runTask(Runnable runnable) {
-        ScheduledFuture<?> future = scheduledExecutorService.schedule(runnable, 0, TimeUnit.SECONDS);
-        tasks.add(future);
+        ScheduledFuture<?> future = this.scheduledExecutorService.schedule(runnable, 0, SECONDS);
+        this.tasks.add(future);
         return future;
     }
 
@@ -68,12 +69,12 @@ public final class Tasks {
      * Delay is calculated in seconds.
      *
      * @param runnable {@link Runnable} that is being assigned to a {@link ScheduledFuture} task.
-     * @param delay The delay before the final task execution.
+     * @param delay    The delay before the final task execution.
      * @return {@link ScheduledFuture} instance.
      */
     public ScheduledFuture<?> runDelayedTask(Runnable runnable, long delay) {
-        ScheduledFuture<?> future = scheduledExecutorService.schedule(runnable, delay, TimeUnit.SECONDS);
-        tasks.add(future);
+        ScheduledFuture<?> future = this.scheduledExecutorService.schedule(runnable, delay, SECONDS);
+        this.tasks.add(future);
         return future;
     }
 
@@ -81,13 +82,13 @@ public final class Tasks {
      * Assigns a passed in {@link Runnable} instance to a {@link ScheduledFuture} task.
      *
      * @param runnable {@link Runnable} that is being assigned to a {@link ScheduledFuture} task.
-     * @param repeat The delay between one task execution and the following execution.
-     * @param delay The delay before the task start.
+     * @param repeat   The delay between one task execution and the following execution.
+     * @param delay    The delay before the task start.
      * @return {@link ScheduledFuture} instance.
      */
     public ScheduledFuture<?> runRepeatingTask(Runnable runnable, long repeat, long delay) {
-        ScheduledFuture<?> future = scheduledExecutorService.scheduleWithFixedDelay(runnable, repeat, delay, TimeUnit.SECONDS);
-        tasks.add(future);
+        ScheduledFuture<?> future = this.scheduledExecutorService.scheduleWithFixedDelay(runnable, repeat, delay, SECONDS);
+        this.tasks.add(future);
         return future;
     }
 
@@ -97,10 +98,10 @@ public final class Tasks {
      * The system waits 2 seconds to cancel every scheduled task.</p>
      */
     public void terminateAllTasks() {
-        tasks.forEach(task -> task.cancel(false));
-        tasks.clear();
+        this.tasks.forEach(task -> task.cancel(false));
+        this.tasks.clear();
         try {
-            scheduledExecutorService.awaitTermination(2, TimeUnit.SECONDS);
+            this.scheduledExecutorService.awaitTermination(2, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -108,6 +109,6 @@ public final class Tasks {
 
     @Override
     public String toString() {
-        return String.format("%s scheduledTasks=%s", getClass(), String.valueOf(tasks.size()));
+        return String.format("%s scheduledTasks=%s", getClass(), String.valueOf(this.tasks.size()));
     }
 }
