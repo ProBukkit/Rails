@@ -48,12 +48,9 @@ public class PacketSendPong extends Packet<StatusPacketHandler> {
     }
 
     @Override
-    public void fromBuffer(Buffer buffer) {
-
-    }
+    public void fromBuffer(Buffer buffer) {}
 
     @Override
-    public void handle(Session session, StatusPacketHandler handler) {
-    }
+    public void handle(StatusPacketHandler handler) {}
 
 }

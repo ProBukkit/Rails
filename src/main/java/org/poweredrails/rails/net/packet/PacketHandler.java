@@ -72,8 +72,10 @@ public class PacketHandler extends SimpleChannelInboundHandler<UnresolvedPacket>
         }
 
         Packet<?> packet = factory.create();
+        packet.setSender(session);
         packet.fromBuffer(buffer);
-        this.handlerRegistry.onHandle(session, packet);
+
+        this.handlerRegistry.doHandle(packet);
     }
 
 }

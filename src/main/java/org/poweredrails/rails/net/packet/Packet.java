@@ -38,6 +38,8 @@ public abstract class Packet<T> implements Serializable {
         private static final long serialVersionUID = 103948516358702773L;
     };
 
+    protected Session sender;
+
     /**
      * Writes packet data to the buffer.
      * @param buffer packet buffer
@@ -52,10 +54,9 @@ public abstract class Packet<T> implements Serializable {
 
     /**
      * Handles this packet's read data.
-     * @param session packet session
      * @param handler packet handler
      */
-    public abstract void handle(Session session, T handler);
+    public abstract void handle(T handler);
 
     /**
      * Returns this packet's handler class.
@@ -64,6 +65,22 @@ public abstract class Packet<T> implements Serializable {
     @SuppressWarnings("unchecked")
     public Class<T> getHandlerClass() {
         return (Class<T>) this.token.getRawType();
+    }
+
+    /**
+     * Sets the sender of this packet.
+     * @param sender session
+     */
+    public void setSender(Session sender) {
+        this.sender = sender;
+    }
+
+    /**
+     * Returns the sender of this packet.
+     * @return sender
+     */
+    public Session getSender() {
+        return this.sender;
     }
 
 }

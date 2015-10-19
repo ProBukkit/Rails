@@ -35,11 +35,11 @@ public class LoginPacketHandler {
 
     /**
      * Handles a login start packet.
-     * @param session sender
      * @param packet login start packet
      */
-    public void onLoginStart(Session session, PacketReceiveLoginStart packet) {
-        this.logger.info("Session " + session + " starting login (" + packet.getName() + ")");
+    public void onLoginStart(PacketReceiveLoginStart packet) {
+//        this.logger.info("Session " + session + " starting login (" + packet.getName() + ")");
+        this.logger.info("User [" + packet.getName() + "] logging in...");
     }
 
 }

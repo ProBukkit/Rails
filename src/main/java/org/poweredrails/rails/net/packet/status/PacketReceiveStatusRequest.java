@@ -36,23 +36,17 @@ public class PacketReceiveStatusRequest extends Packet<StatusPacketHandler> {
     private static final long serialVersionUID = 6842448655547106429L;
 
     @Override
-    public void toBuffer(Buffer buffer) {
-
-    }
+    public void toBuffer(Buffer buffer) {}
 
     @Override
-    public void fromBuffer(Buffer buffer) {
-
-    }
+    public void fromBuffer(Buffer buffer) {}
 
     @Override
-    public void handle(Session session, StatusPacketHandler handler) {
-        if (handler != null) {
-            try {
-                handler.onStatusRequestPacket(session, this);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+    public void handle(StatusPacketHandler handler) {
+        try {
+            handler.onStatusRequestPacket(this);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 

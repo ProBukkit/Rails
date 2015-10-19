@@ -37,9 +37,7 @@ public class PacketReceivePing extends Packet<StatusPacketHandler> {
     private long time;
 
     @Override
-    public void toBuffer(Buffer buffer) {
-
-    }
+    public void toBuffer(Buffer buffer) {}
 
     @Override
     public void fromBuffer(Buffer buffer) {
@@ -47,10 +45,8 @@ public class PacketReceivePing extends Packet<StatusPacketHandler> {
     }
 
     @Override
-    public void handle(Session session, StatusPacketHandler handler) {
-        if (handler != null) {
-            handler.onPingPacket(session, this);
-        }
+    public void handle(StatusPacketHandler handler) {
+        handler.onPingPacket(this);
     }
 
     public long getTime() {

@@ -49,15 +49,14 @@ public class HandlerRegistry {
     /**
      * Calls the handle method on a packet.
      * @param <T> handler type
-     * @param session session
      * @param packet packet
      */
-    public <T> void onHandle(Session session, Packet<T> packet) {
+    public <T> void doHandle(Packet<T> packet) {
         Class<T> clazz = packet.getHandlerClass();
-        T handler = this.getHandler(clazz);
+        T handler = getHandler(clazz);
 
         if (handler != null) {
-            packet.handle(session, handler);
+            packet.handle(handler);
         }
     }
 

@@ -27,7 +27,6 @@ package org.poweredrails.rails.net.packet.login;
 import org.poweredrails.rails.net.buffer.Buffer;
 import org.poweredrails.rails.net.handler.login.LoginPacketHandler;
 import org.poweredrails.rails.net.packet.Packet;
-import org.poweredrails.rails.net.session.Session;
 
 public class PacketReceiveLoginStart extends Packet<LoginPacketHandler> {
 
@@ -36,8 +35,7 @@ public class PacketReceiveLoginStart extends Packet<LoginPacketHandler> {
     private String name;
 
     @Override
-    public void toBuffer(Buffer buffer) {
-    }
+    public void toBuffer(Buffer buffer) {}
 
     @Override
     public void fromBuffer(Buffer buffer) {
@@ -45,10 +43,8 @@ public class PacketReceiveLoginStart extends Packet<LoginPacketHandler> {
     }
 
     @Override
-    public void handle(Session session, LoginPacketHandler handler) {
-        if (handler != null) {
-            handler.onLoginStart(session, this);
-        }
+    public void handle(LoginPacketHandler handler) {
+        handler.onLoginStart(this);
     }
 
     public String getName() {

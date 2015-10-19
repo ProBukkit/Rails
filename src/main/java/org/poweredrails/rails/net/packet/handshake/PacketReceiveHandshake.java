@@ -42,8 +42,7 @@ public class PacketReceiveHandshake extends Packet<HandshakePacketHandler> {
     private int state;
 
     @Override
-    public void toBuffer(Buffer buffer) {
-    }
+    public void toBuffer(Buffer buffer) {}
 
     @Override
     public void fromBuffer(Buffer buffer) {
@@ -54,10 +53,8 @@ public class PacketReceiveHandshake extends Packet<HandshakePacketHandler> {
     }
 
     @Override
-    public void handle(Session session, HandshakePacketHandler handler) {
-        if (handler != null) {
-            handler.onHandshakePacket(session, this);
-        }
+    public void handle(HandshakePacketHandler handler) {
+        handler.onHandshakePacket(this);
     }
 
     public int getProtocol() {
