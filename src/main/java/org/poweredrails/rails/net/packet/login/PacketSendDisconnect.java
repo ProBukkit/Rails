@@ -25,17 +25,13 @@
 package org.poweredrails.rails.net.packet.login;
 
 import org.poweredrails.rails.net.buffer.Buffer;
-import org.poweredrails.rails.net.handler.HandlerRegistry;
 import org.poweredrails.rails.net.handler.login.LoginPacketHandler;
 import org.poweredrails.rails.net.packet.Packet;
-import org.poweredrails.rails.net.session.Session;
 
 /**
  * TODO: Reason should be a TextComponent (JSON construct).
  */
 public class PacketSendDisconnect extends Packet<LoginPacketHandler> {
-
-    private static final long serialVersionUID = 6223476178758093139L;
 
     private String reason;
 

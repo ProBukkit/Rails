@@ -25,16 +25,10 @@
 package org.poweredrails.rails.net.packet.handshake;
 
 import org.poweredrails.rails.net.buffer.Buffer;
-import org.poweredrails.rails.net.handler.HandlerRegistry;
 import org.poweredrails.rails.net.handler.handshake.HandshakePacketHandler;
 import org.poweredrails.rails.net.packet.Packet;
-import org.poweredrails.rails.net.session.Session;
-
-import java.util.logging.Logger;
 
 public class PacketReceiveHandshake extends Packet<HandshakePacketHandler> {
-
-    private static final long serialVersionUID = 2767186348103136552L;
 
     private int protocol;
     private String address;

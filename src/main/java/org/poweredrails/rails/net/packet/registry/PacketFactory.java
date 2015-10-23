@@ -26,11 +26,7 @@ package org.poweredrails.rails.net.packet.registry;
 
 import org.poweredrails.rails.net.packet.Packet;
 
-import java.io.Serializable;
-
-public class PacketFactory implements Serializable {
-
-    private static final long serialVersionUID = 745266530533878107L;
+public class PacketFactory {
 
     private Class<? extends Packet<?>> clazz;
 

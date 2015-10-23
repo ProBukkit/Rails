@@ -30,11 +30,8 @@ import org.json.JSONObject;
 import org.poweredrails.rails.net.buffer.Buffer;
 import org.poweredrails.rails.net.handler.status.StatusPacketHandler;
 import org.poweredrails.rails.net.packet.Packet;
-import org.poweredrails.rails.net.session.Session;
 
 public class PacketSendStatusResponse extends Packet<StatusPacketHandler> {
-
-    private static final long serialVersionUID = -6126870628730207287L;
 
     private JSONObject json;
 
