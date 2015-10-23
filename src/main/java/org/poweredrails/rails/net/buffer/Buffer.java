@@ -113,6 +113,15 @@ public class Buffer {
     }
 
     /**
+     * Writes a byte array to the byte buffer.
+     * @param array byte array
+     */
+    public void writeByteArray(byte[] array) {
+        this.writeVarInt(array.length);
+        this.buf.writeBytes(array);
+    }
+
+    /**
      * Reads an integer from the byte buffer.
      * @return integer
      */
@@ -191,6 +200,15 @@ public class Buffer {
             }
         }
         return result;
+    }
+
+    /**
+     * Reads a byte array from the byte buffer.
+     * @return byte array
+     */
+    public byte[] readByteArray() {
+        int length = this.readVarInt();
+        return this.buf.readBytes(length).array();
     }
 
     /**
