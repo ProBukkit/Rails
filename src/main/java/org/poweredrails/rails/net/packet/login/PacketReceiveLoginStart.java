@@ -30,8 +30,6 @@ import org.poweredrails.rails.net.packet.Packet;
 
 public class PacketReceiveLoginStart extends Packet<LoginPacketHandler> {
 
-    private static final long serialVersionUID = -5021986471716518844L;
-
     private String name;
 
     @Override

@@ -26,14 +26,10 @@ package org.poweredrails.rails.net.packet.status;
 
 import org.json.JSONException;
 import org.poweredrails.rails.net.buffer.Buffer;
-import org.poweredrails.rails.net.handler.HandlerRegistry;
 import org.poweredrails.rails.net.handler.status.StatusPacketHandler;
 import org.poweredrails.rails.net.packet.Packet;
-import org.poweredrails.rails.net.session.Session;
 
 public class PacketReceiveStatusRequest extends Packet<StatusPacketHandler> {
-
-    private static final long serialVersionUID = 6842448655547106429L;
 
     @Override
     public void toBuffer(Buffer buffer) {}

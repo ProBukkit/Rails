@@ -28,11 +28,7 @@ import com.google.common.reflect.TypeToken;
 import org.poweredrails.rails.net.buffer.Buffer;
 import org.poweredrails.rails.net.session.Session;
 
-import java.io.Serializable;
-
-public abstract class Packet<T> implements Serializable {
-
-    private static final long serialVersionUID = 7811194516358702773L;
+public abstract class Packet<T> {
 
     private final TypeToken<T> token = new TypeToken<T>(getClass()) {
         private static final long serialVersionUID = 103948516358702773L;
