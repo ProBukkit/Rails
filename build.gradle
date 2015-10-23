@@ -18,6 +18,8 @@ apply plugin: 'com.github.johnrengelman.shadow'
 group = 'org.poweredrails'
 version = '0.1-DEVELOPMENT'
 
+defaultTasks 'build', 'clean', 'licenseFormat', 'shadowJar'
+
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
