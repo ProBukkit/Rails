@@ -30,7 +30,7 @@ import org.poweredrails.rails.net.packet.login.PacketReceiveEncryptResponse;
 import org.poweredrails.rails.net.packet.login.PacketReceiveLoginStart;
 import org.poweredrails.rails.net.packet.login.PacketSendEncryptRequest;
 import org.poweredrails.rails.net.session.Session;
-import org.poweredrails.rails.util.UuidUtil;
+import org.poweredrails.rails.util.UUIDUtil;
 import org.poweredrails.rails.util.crypto.EncryptUtil;
 
 import javax.crypto.Cipher;
@@ -174,7 +174,7 @@ public class LoginPacketHandler {
                     throw new RuntimeException("Failed to parse Mojang JSON response!", e);
                 }
 
-                UUID uuid = UuidUtil.fromFlatString(id);
+                UUID uuid = UUIDUtil.fromFlatString(id);
 
                 // TODO: Player Properties
                 // TODO: Create new Profile
