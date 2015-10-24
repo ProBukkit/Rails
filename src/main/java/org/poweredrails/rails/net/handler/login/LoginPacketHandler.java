@@ -141,7 +141,7 @@ public class LoginPacketHandler {
 
         new Thread(() -> {
             final String BASE_URL
-                    = "https://sessionserver.mojang.com/session/minecraft/hasJoined/?username=%s&password=serverId=%s";
+                    = "https://sessionserver.mojang.com/session/minecraft/hasJoined?username=%s&serverId=%s";
 
             URLConnection connection = null;
             try {
