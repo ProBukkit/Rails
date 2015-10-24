@@ -26,7 +26,7 @@ package org.poweredrails.rails.util;
 
 import java.util.UUID;
 
-public class UuidUtil {
+public class UUIDUtil {
 
     /**
      * Parses and returns the UUID from a flat string.
