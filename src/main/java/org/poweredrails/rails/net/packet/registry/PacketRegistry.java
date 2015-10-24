@@ -32,8 +32,10 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import org.poweredrails.rails.net.packet.Packet;
 import org.poweredrails.rails.net.packet.handshake.PacketReceiveHandshake;
+import org.poweredrails.rails.net.packet.login.PacketReceiveEncryptResponse;
 import org.poweredrails.rails.net.packet.login.PacketReceiveLoginStart;
 import org.poweredrails.rails.net.packet.login.PacketSendDisconnect;
+import org.poweredrails.rails.net.packet.login.PacketSendEncryptRequest;
 import org.poweredrails.rails.net.packet.status.PacketReceivePing;
 import org.poweredrails.rails.net.packet.status.PacketReceiveStatusRequest;
 import org.poweredrails.rails.net.packet.status.PacketSendPong;
@@ -62,6 +64,8 @@ public class PacketRegistry {
 
         this.tableIncoming.put(LOGIN, 0x00, PacketReceiveLoginStart.class);
         this.tableOutgoing.put(LOGIN, 0x00, PacketSendDisconnect.class);
+        this.tableIncoming.put(LOGIN, 0x01, PacketReceiveEncryptResponse.class);
+        this.tableOutgoing.put(LOGIN, 0x01, PacketSendEncryptRequest.class);
     }
 
     /**
