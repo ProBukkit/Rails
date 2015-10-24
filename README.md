@@ -10,18 +10,18 @@ Rails is an open source, free, and independent Minecraft server platform designe
 
 ## Version Map
 
-0.1 - Networking
-0.2 - Events
-0.2.5 - Basic Entity API
-0.3 - Players
-0.4 - Multiplayer
-0.5 - Worlds
-0.6 - Entities
-0.7 - World Generation
-0.8 - Emulation
-0.9 - Plugins
-0.9.5 - Optimisation
-1.0 - RELEASE (Simple functionality)
+* 0.1 - Networking
+* 0.2 - Events
+* 0.2.5 - Basic Entity API
+* 0.3 - Players
+* 0.4 - Multiplayer
+* 0.5 - Worlds
+* 0.6 - Entities
+* 0.7 - World Generation
+* 0.8 - Emulation
+* 0.9 - Plugins
+* 0.9.5 - Optimisation
+* 1.0 - RELEASE (Simple functionality)
 
 ## Client Support
 
