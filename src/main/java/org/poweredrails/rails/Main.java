@@ -49,16 +49,14 @@ public class Main {
      */
     public static void main(String[] args) {
         ConsoleHandler consoleHandler = new ConsoleHandler();
-        ConsoleFormatter consoleFormatter = new ConsoleFormatter();
-        consoleHandler.setFormatter(consoleFormatter);
+        consoleHandler.setFormatter(new ConsoleFormatter());
 
         logger.setUseParentHandlers(false);
         logger.addHandler(consoleHandler);
 
         logger.info("Starting server...");
 
-        NetworkManager networkManager = new NetworkManager(logger);
-        new Main(networkManager);
+        new Main(new NetworkManager(logger));
     }
 
 }

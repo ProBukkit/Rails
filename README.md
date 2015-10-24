@@ -4,11 +4,9 @@ Rails
 
 [![Status][travis-badge]][travis] [![Chat at http://gitter.im/PoweredRails/Rails][gitter-badge]][gitter]
 
-Rails is a open source, free, and independent Minecraft server platform designed with [Java 8] and licensed under the [MIT license]. 
+Rails is an open source, free, and independent Minecraft server platform designed with [Java 8] and licensed under the [MIT license]. 
 
-The goal is to have a server not based off or on top of Mojang's proprietary Minecraft server, and therefore making it not longer bound to Mojang's terms.
-
- * Status: __Pre-alpha__
+ * Status: __Alpha__
 
 ## Contributing
 Are you a developer looking to contribute some code? We'd love the help!
