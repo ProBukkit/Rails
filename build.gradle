@@ -17,6 +17,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 
 group = 'org.poweredrails'
 version = '0.1-DEVELOPMENT'
+archivesBaseName = name
 
 defaultTasks 'build', 'clean', 'licenseFormat', 'shadowJar'
 
