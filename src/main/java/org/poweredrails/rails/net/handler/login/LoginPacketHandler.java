@@ -34,10 +34,8 @@ import org.poweredrails.rails.util.UUIDUtil;
 import org.poweredrails.rails.util.crypto.EncryptUtil;
 
 import javax.crypto.Cipher;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,9 +43,10 @@ import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLConnection;
-import java.security.*;
+import java.security.KeyPair;
+import java.security.MessageDigest;
+import java.security.PrivateKey;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -140,50 +139,49 @@ public class LoginPacketHandler {
         }
 
         new Thread(() -> {
-            final String BASE_URL
-                    = "https://sessionserver.mojang.com/session/minecraft/hasJoined?username=%s&serverId=%s";
+                final String baseUrl = "https://sessionserver.mojang.com/session/minecraft/hasJoined?username=%s&serverId=%s";
 
-            URLConnection connection = null;
-            try {
-                connection = new URL(String.format(BASE_URL, sender.getVerifyUsername(), hash)).openConnection();
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to open a connection to Mojang!", e);
-            }
-
-            JSONObject response = null;
-            try {
-                final InputStream in = connection.getInputStream();
-                BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
-                StringBuilder builder = new StringBuilder();
-                String line = null;
-                while ((line = br.readLine()) != null) {
-                    builder.append(line).append('\n');
+                URLConnection connection = null;
+                try {
+                    connection = new URL(String.format(baseUrl, sender.getVerifyUsername(), hash)).openConnection();
+                } catch (IOException e) {
+                    throw new RuntimeException("Failed to open a connection to Mojang!", e);
                 }
 
-                response = new JSONObject(builder.toString());
-            } catch (Exception e) {
-                // TODO: Disconnect user instead!
-                throw new RuntimeException("Failed to verify username!", e);
-            }
+                JSONObject response = null;
+                try {
+                    final InputStream in = connection.getInputStream();
+                    BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
-            String name = null;
-            String id   = null;
-            try {
-                name = response.getString("name");
-                id   = response.getString("id");
-            } catch (JSONException e) {
-                throw new RuntimeException("Failed to parse Mojang JSON response!", e);
-            }
+                    StringBuilder builder = new StringBuilder();
+                    String line = null;
+                    while ((line = br.readLine()) != null) {
+                        builder.append(line).append('\n');
+                    }
 
-            UUID uuid = UUIDUtil.fromFlatString(id);
+                    response = new JSONObject(builder.toString());
+                } catch (Exception e) {
+                    // TODO: Disconnect user instead!
+                    throw new RuntimeException("Failed to verify username!", e);
+                }
 
-            // TODO: Player Properties
-            // TODO: Create new Profile
-            // TODO: Dispatch PlayerLoginEvent
+                String name = null;
+                String id   = null;
+                try {
+                    name = response.getString("name");
+                    id   = response.getString("id");
+                } catch (JSONException e) {
+                    throw new RuntimeException("Failed to parse Mojang JSON response!", e);
+                }
 
-            this.logger.info("Successfully authenticated Player [" + name + ", " + uuid + "].");
-        }).start();
+                UUID uuid = UUIDUtil.fromFlatString(id);
+
+                // TODO: Player Properties
+                // TODO: Create new Profile
+                // TODO: Dispatch PlayerLoginEvent
+
+                this.logger.info("Successfully authenticated Player [" + name + ", " + uuid + "].");
+            }).start();
     }
 
 }
