@@ -38,10 +38,10 @@ public class ScheduledQueueExecutor {
 
     public ScheduledQueueExecutor() {
         this.enqueueAsRepeating(() -> this.tasks.forEach(t -> {
-            if (t.isCancelled()) {
-                this.tasks.remove(t);
-            }
-        }), 0, 1, TimeUnit.MILLISECONDS);
+                if (t.isCancelled()) {
+                    this.tasks.remove(t);
+                }
+            }), 0, 1, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -60,7 +60,7 @@ public class ScheduledQueueExecutor {
      * @return the future object for this task
      */
     public ScheduledFuture<?> enqueueWithDelay(Runnable rnbl, long delay, TimeUnit unit) {
-        return executor.schedule(rnbl, delay, unit);
+        return this.executor.schedule(rnbl, delay, unit);
     }
 
     /**
@@ -72,7 +72,7 @@ public class ScheduledQueueExecutor {
      * @return the future object for this task
      */
     public ScheduledFuture<?> enqueueAsRepeating(Runnable rnbl, long delay, long period, TimeUnit unit) {
-        ScheduledFuture<?> future = executor.scheduleAtFixedRate(rnbl, delay, period, unit);
+        ScheduledFuture<?> future = this.executor.scheduleAtFixedRate(rnbl, delay, period, unit);
         this.tasks.add(future);
         return future;
     }
