@@ -59,8 +59,9 @@ public class EventDispatcher {
      * Dispatches a packet event across its handlers, for a packet.
      * @param packet the packet to dispatch
      * @param <T> the packet type
+     * @return true if the packet was cancelled
      */
-    public <T extends Packet<?>> void dispatchPacket(T packet) {
+    public <T extends Packet<?>> boolean dispatchPacket(T packet) {
         List<EventHandler> handlers = this.registry.getHandlersFor(packet);
 
         PacketEvent<T> event = new PacketEvent<>(packet);
@@ -72,6 +73,8 @@ public class EventDispatcher {
 
             handler.handle(event);
         }
+
+        return event.isCancelled();
     }
 
 }

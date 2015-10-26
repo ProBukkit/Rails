@@ -56,8 +56,9 @@ public class HandlerRegistry {
         Class<T> clazz = packet.getHandlerClass();
         T handler = getHandler(clazz);
 
-        if (handler != null) {
-            Main.getEventBus().firePacket(packet);
+        // If the handler isn't null AND when firing the packet event, it wasn't cancelled...
+        if (handler != null && !Main.getEventBus().firePacket(packet)) {
+            // have the handler handle it
             packet.handle(handler);
         }
     }

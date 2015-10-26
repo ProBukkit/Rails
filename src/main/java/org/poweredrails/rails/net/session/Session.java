@@ -70,8 +70,9 @@ public class Session {
      * @param packet packet
      */
     public void sendPacket(Packet<?> packet) {
-        Main.getEventBus().firePacket(packet);
-        this.channel.writeAndFlush(packet);
+        if (!Main.getEventBus().firePacket(packet)) {
+            this.channel.writeAndFlush(packet);
+        }
     }
 
     /**

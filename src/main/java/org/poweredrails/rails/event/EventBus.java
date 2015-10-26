@@ -48,9 +48,10 @@ public class EventBus {
      * Fires a packet event for the packet.
      * @param packet the packet
      * @param <T> the packet type
+     * @return true if the packet was cancelled
      */
-    public <T extends Packet<?>> void firePacket(T packet) {
-        this.dispatcher.dispatchPacket(packet);
+    public <T extends Packet<?>> boolean firePacket(T packet) {
+        return this.dispatcher.dispatchPacket(packet);
     }
 
     /**
