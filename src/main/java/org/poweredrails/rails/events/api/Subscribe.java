@@ -22,47 +22,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails;
+package org.poweredrails.rails.events.api;
 
-import org.poweredrails.rails.events.api.EventBus;
-import org.poweredrails.rails.log.ConsoleFormatter;
-import org.poweredrails.rails.net.NetworkManager;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.net.InetSocketAddress;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Logger;
-
-public class Main {
-
-    private static final Logger logger = Logger.getLogger("Rails");
-    private static EventBus eventBus = new EventBus();
-
-    protected Main(NetworkManager networkManager) {
-        this(networkManager, "localhost", 25565);
-    }
-
-    protected Main(NetworkManager networkManager, String host, int port) {
-        networkManager.bindTo(new InetSocketAddress(host, port));
-    }
+/**
+ * The annotation in which event handlers encompass.
+ */
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Subscribe {
 
     /**
-     * Starts the Server.
-     * @param args boot arguments
+     * Returns the priority of the listener. By default, this is NORMAL.
+     * @return the event priority
      */
-    public static void main(String[] args) {
-        ConsoleHandler consoleHandler = new ConsoleHandler();
-        consoleHandler.setFormatter(new ConsoleFormatter());
+    EventPriority priority() default EventPriority.NORMAL;
 
-        logger.setUseParentHandlers(false);
-        logger.addHandler(consoleHandler);
-
-        logger.info("Starting server...");
-
-        new Main(new NetworkManager(logger));
-    }
-
-    public static EventBus getEventBus() {
-        return eventBus;
-    }
+    /**
+     * Returns whether the event handler should ignore previously cancelled events. By default, this is false.
+     * @return true if the handler should ignore cancelled
+     */
+    boolean ignoreCancelled() default false;
 
 }
