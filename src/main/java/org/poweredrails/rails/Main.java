@@ -24,7 +24,7 @@
  */
 package org.poweredrails.rails;
 
-import org.poweredrails.rails.events.api.EventBus;
+import org.poweredrails.rails.event.EventBus;
 import org.poweredrails.rails.log.ConsoleFormatter;
 import org.poweredrails.rails.net.NetworkManager;
 

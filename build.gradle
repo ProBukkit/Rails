@@ -43,7 +43,7 @@ dependencies {
     compile 'com.google.guava:guava:18.0'
     compile 'io.netty:netty-all:4.0.21.Final'
 
-    checkstyle 'com.puppycrawl.tools:checkstyle:6.7'
+    checkstyle 'com.puppycrawl.tools:checkstyle:6.11.2'
 }
 
 configure([compileJava, compileTestJava]) {

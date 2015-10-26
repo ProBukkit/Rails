@@ -38,10 +38,10 @@ public class ScheduledQueueExecutor {
 
     public ScheduledQueueExecutor() {
         this.enqueueAsRepeating(() -> this.tasks.forEach(t -> {
-                if (t.isCancelled()) {
-                    this.tasks.remove(t);
-                }
-            }), 0, 1, TimeUnit.MILLISECONDS);
+            if (t.isCancelled()) {
+                this.tasks.remove(t);
+            }
+        }), 0, 1, TimeUnit.MILLISECONDS);
     }
 
     /**

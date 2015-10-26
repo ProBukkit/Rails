@@ -22,51 +22,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.events.api;
+package org.poweredrails.rails.event;
 
-import org.poweredrails.rails.net.packet.Packet;
+public enum EventPriority {
 
-public class EventBus {
-
-    private final ListenerRegistry registry;
-    private final EventDispatcher dispatcher;
-
-    public EventBus() {
-        this.registry   = new ListenerRegistry();
-        this.dispatcher = new EventDispatcher(this.registry);
-    }
-
-    /**
-     * Fires an event.
-     * @param event the event
-     */
-    public void fire(Event event) {
-        this.dispatcher.dispatch(event);
-    }
-
-    /**
-     * Fires a packet event for the packet.
-     * @param packet the packet
-     * @param <T> the packet type
-     */
-    public <T extends Packet<?>> void firePacket(T packet) {
-        this.dispatcher.dispatchPacket(packet);
-    }
-
-    /**
-     * Registers a listener.
-     * @param listener the listener
-     */
-    public void registerListener(Listener listener) {
-        this.registry.register(listener);
-    }
-
-    /**
-     * Unregisters a listener.
-     * @param listener the listener
-     */
-    public void unregisterListener(Listener listener) {
-        this.registry.unregister(listener);
-    }
+    LOWEST,
+    LOW,
+    NORMAL,
+    HIGH,
+    HIGHEST
 
 }

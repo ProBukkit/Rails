@@ -70,12 +70,12 @@ public class NetworkManager {
      */
     public ChannelFuture bindTo(final SocketAddress socketAddress) {
         return this.nettyBootstrap.bind(socketAddress).addListener(f -> {
-                if (f.isSuccess()) {
-                    onBindSuccess(socketAddress);
-                } else {
-                    onBindFailure(socketAddress, f.cause());
-                }
-            });
+            if (f.isSuccess()) {
+                onBindSuccess(socketAddress);
+            } else {
+                onBindFailure(socketAddress, f.cause());
+            }
+        });
     }
 
     /**

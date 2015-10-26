@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.events.api;
+package org.poweredrails.rails.event;
 
 import com.google.common.reflect.TypeToken;
 import org.poweredrails.rails.net.packet.Packet;
@@ -61,10 +61,10 @@ public class ListenerRegistry {
      */
     public void unregister(Listener listener) {
         this.handlers.forEach((handler, handlerListener) -> {
-                if (listener.equals(handlerListener)) {
-                    this.handlers.remove(handler);
-                }
-            });
+            if (listener.equals(handlerListener)) {
+                this.handlers.remove(handler);
+            }
+        });
     }
 
     /**
@@ -76,10 +76,10 @@ public class ListenerRegistry {
         List<EventHandler> list = new ArrayList<>();
 
         this.handlers.keySet().forEach(handler -> {
-                if (handler.handlesEvent(event.getClass())) {
-                    list.add(handler);
-                }
-            });
+            if (handler.handlesEvent(event.getClass())) {
+                list.add(handler);
+            }
+        });
 
         return list;
     }
@@ -88,11 +88,11 @@ public class ListenerRegistry {
         List<EventHandler> list = new ArrayList<>();
 
         this.handlers.keySet().forEach(handler -> {
-                if (handler.handlesEvent(PacketEvent.class)
-                        && handler.handlesPacket(packet)) {
-                    list.add(handler);
-                }
-            });
+            if (handler.handlesEvent(PacketEvent.class)
+                    && handler.handlesPacket(packet)) {
+                list.add(handler);
+            }
+        });
 
         return list;
     }

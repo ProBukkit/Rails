@@ -22,25 +22,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.events.api;
+package org.poweredrails.rails.event;
 
-import java.util.Comparator;
+import com.google.common.reflect.TypeToken;
+import org.poweredrails.rails.net.packet.Packet;
 
-public class EventPriorityComparator implements Comparator<EventHandler> {
+/**
+ * A class used by event handlers to specify what packet it should be fired for.
+ * @param <T> the packet type
+ */
+public class PacketEvent<T extends Packet<?>> extends CancellableEvent {
 
-    @Override
-    public int compare(EventHandler o1, EventHandler o2) {
-        return o2.getPriority().compareTo(o1.getPriority());
+    private final TypeToken<T> token = new TypeToken<T>(getClass()) {
+        private static final long serialVersionUID = 103948516358702773L;
+    };
+
+    private final T packet;
+
+    public PacketEvent(T packet) {
+        this.packet = packet;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return false;
+    public T getPacket() {
+        return this.packet;
     }
 
-    @Override
-    public int hashCode() {
-        return -1;
+    @SuppressWarnings("unchecked")
+    public Class<T> getPacketClass() {
+        return (Class<T>) this.token.getRawType();
     }
 
 }

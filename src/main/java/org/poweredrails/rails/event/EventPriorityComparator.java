@@ -22,14 +22,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.events.api;
+package org.poweredrails.rails.event;
 
-public enum EventPriority {
+import java.util.Comparator;
 
-    LOWEST,
-    LOW,
-    NORMAL,
-    HIGH,
-    HIGHEST
+public class EventPriorityComparator implements Comparator<EventHandler> {
+
+    @Override
+    public int compare(EventHandler o1, EventHandler o2) {
+        return o2.getPriority().compareTo(o1.getPriority());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return -1;
+    }
 
 }

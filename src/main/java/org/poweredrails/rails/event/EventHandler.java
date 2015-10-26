@@ -22,11 +22,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.events.api;
+package org.poweredrails.rails.event;
 
 import com.google.common.reflect.TypeToken;
 import org.poweredrails.rails.net.packet.Packet;
-import org.poweredrails.rails.net.packet.login.PacketSendEncryptRequest;
 
 import java.lang.reflect.Method;
 

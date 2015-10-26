@@ -22,56 +22,51 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.events.api;
+package org.poweredrails.rails.event;
 
 import org.poweredrails.rails.net.packet.Packet;
 
-import java.util.List;
-
-public class EventDispatcher {
+public class EventBus {
 
     private final ListenerRegistry registry;
+    private final EventDispatcher dispatcher;
 
-    public EventDispatcher(ListenerRegistry registry) {
-        this.registry = registry;
+    public EventBus() {
+        this.registry   = new ListenerRegistry();
+        this.dispatcher = new EventDispatcher(this.registry);
     }
 
     /**
-     * Dispatches an event across its handlers.
-     * @param event the event to dispatch
+     * Fires an event.
+     * @param event the event
      */
-    public void dispatch(Event event) {
-        List<EventHandler> handlers = this.registry.getHandlersFor(event);
-
-        for (EventHandler handler : handlers) {
-            if (event instanceof CancellableEvent) {
-                CancellableEvent cancellableEvent = (CancellableEvent) event;
-                if (handler.ignoresCancelled() && cancellableEvent.isCancelled()) {
-                    continue;
-                }
-            }
-
-            handler.handle(event);
-        }
+    public void fire(Event event) {
+        this.dispatcher.dispatch(event);
     }
 
     /**
-     * Dispatches a packet event across its handlers, for a packet.
-     * @param packet the packet to dispatch
+     * Fires a packet event for the packet.
+     * @param packet the packet
      * @param <T> the packet type
      */
-    public <T extends Packet<?>> void dispatchPacket(T packet) {
-        List<EventHandler> handlers = this.registry.getHandlersFor(packet);
+    public <T extends Packet<?>> void firePacket(T packet) {
+        this.dispatcher.dispatchPacket(packet);
+    }
 
-        PacketEvent<T> event = new PacketEvent<>(packet);
+    /**
+     * Registers a listener.
+     * @param listener the listener
+     */
+    public void registerListener(Listener listener) {
+        this.registry.register(listener);
+    }
 
-        for (EventHandler handler : handlers) {
-            if (handler.ignoresCancelled() && event.isCancelled()) {
-                continue;
-            }
-
-            handler.handle(event);
-        }
+    /**
+     * Unregisters a listener.
+     * @param listener the listener
+     */
+    public void unregisterListener(Listener listener) {
+        this.registry.unregister(listener);
     }
 
 }

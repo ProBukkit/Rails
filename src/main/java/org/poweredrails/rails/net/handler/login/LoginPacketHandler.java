@@ -139,49 +139,45 @@ public class LoginPacketHandler {
         }
 
         new Thread(() -> {
-                final String baseUrl = "https://sessionserver.mojang.com/session/minecraft/hasJoined?username=%s&serverId=%s";
+            final String baseUrl = "https://sessionserver.mojang.com/session/minecraft/hasJoined?username=%s&serverId=%s";
 
-                URLConnection connection = null;
-                try {
-                    connection = new URL(String.format(baseUrl, sender.getVerifyUsername(), hash)).openConnection();
-                } catch (IOException e) {
-                    throw new RuntimeException("Failed to open a connection to Mojang!", e);
+            URLConnection connection = null;
+            try {
+                connection = new URL(String.format(baseUrl, sender.getVerifyUsername(), hash)).openConnection();
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to open a connection to Mojang!", e);
+            }
+
+            JSONObject response = null;
+            try {
+                final InputStream in = connection.getInputStream();
+                BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                StringBuilder builder = new StringBuilder();
+                String line = null;
+                while ((line = br.readLine()) != null) {
+                    builder.append(line).append('\n');
                 }
 
-                JSONObject response = null;
-                try {
-                    final InputStream in = connection.getInputStream();
-                    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                response = new JSONObject(builder.toString());
+            } catch (Exception e) {
+                // TODO: Disconnect user instead!
+                throw new RuntimeException("Failed to verify username!", e);
+            }
+            String name = null;
+            String id   = null;
+            try {
+                name = response.getString("name");
+                id   = response.getString("id");
+            } catch (JSONException e) {
+                throw new RuntimeException("Failed to parse Mojang JSON response!", e);
+            }
 
-                    StringBuilder builder = new StringBuilder();
-                    String line = null;
-                    while ((line = br.readLine()) != null) {
-                        builder.append(line).append('\n');
-                    }
-
-                    response = new JSONObject(builder.toString());
-                } catch (Exception e) {
-                    // TODO: Disconnect user instead!
-                    throw new RuntimeException("Failed to verify username!", e);
-                }
-
-                String name = null;
-                String id   = null;
-                try {
-                    name = response.getString("name");
-                    id   = response.getString("id");
-                } catch (JSONException e) {
-                    throw new RuntimeException("Failed to parse Mojang JSON response!", e);
-                }
-
-                UUID uuid = UUIDUtil.fromFlatString(id);
-
+            UUID uuid = UUIDUtil.fromFlatString(id);
                 // TODO: Player Properties
                 // TODO: Create new Profile
                 // TODO: Dispatch PlayerLoginEvent
-
-                this.logger.info("Successfully authenticated Player [" + name + ", " + uuid + "].");
-            }).start();
+            this.logger.info("Successfully authenticated Player [" + name + ", " + uuid + "].");
+        }).start();
     }
 
 }
