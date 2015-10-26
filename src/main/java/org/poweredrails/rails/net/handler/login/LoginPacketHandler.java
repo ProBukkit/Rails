@@ -28,15 +28,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.poweredrails.rails.net.packet.login.PacketReceiveEncryptResponse;
 import org.poweredrails.rails.net.packet.login.PacketReceiveLoginStart;
-import org.poweredrails.rails.net.packet.login.PacketSendDisconnect;
 import org.poweredrails.rails.net.packet.login.PacketSendEncryptRequest;
 import org.poweredrails.rails.net.session.Session;
 import org.poweredrails.rails.util.UUIDUtil;
 import org.poweredrails.rails.util.crypto.EncryptUtil;
 
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,6 +46,9 @@ import java.security.PrivateKey;
 import java.util.Arrays;
 import java.util.UUID;
 import java.util.logging.Logger;
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 public class LoginPacketHandler {
 
@@ -97,14 +96,14 @@ public class LoginPacketHandler {
             Cipher cipher = Cipher.getInstance("RSA");
 
             cipher.init(Cipher.DECRYPT_MODE, this.privateKey);
-            SecretKey sharedSecret = new SecretKeySpec(cipher.doFinal(packet.getSharedSecret()), "AES");
+            final SecretKey sharedSecret = new SecretKeySpec(cipher.doFinal(packet.getSharedSecret()), "AES");
 
             cipher.init(Cipher.DECRYPT_MODE, this.privateKey);
-            byte[] verifyToken = cipher.doFinal(packet.getVerifyToken());
+            final byte[] verifyToken = cipher.doFinal(packet.getVerifyToken());
 
             if (!Arrays.equals(verifyToken, sender.getVerifyToken())) {
-                // TODO: Add disconnect description
-                PacketSendDisconnect response = new PacketSendDisconnect("...");
+                // TODO: Send disconnect packet
+//                PacketSendDisconnect response = new PacketSendDisconnect("...");
 //                sender.sendPacket(response);
                 return;
             }
