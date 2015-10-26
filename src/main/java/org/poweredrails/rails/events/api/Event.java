@@ -22,47 +22,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails;
+package org.poweredrails.rails.events.api;
 
-import org.poweredrails.rails.events.api.EventBus;
-import org.poweredrails.rails.log.ConsoleFormatter;
-import org.poweredrails.rails.net.NetworkManager;
-
-import java.net.InetSocketAddress;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Logger;
-
-public class Main {
-
-    private static final Logger logger = Logger.getLogger("Rails");
-    private static EventBus eventBus = new EventBus();
-
-    protected Main(NetworkManager networkManager) {
-        this(networkManager, "localhost", 25565);
-    }
-
-    protected Main(NetworkManager networkManager, String host, int port) {
-        networkManager.bindTo(new InetSocketAddress(host, port));
-    }
-
-    /**
-     * Starts the Server.
-     * @param args boot arguments
-     */
-    public static void main(String[] args) {
-        ConsoleHandler consoleHandler = new ConsoleHandler();
-        consoleHandler.setFormatter(new ConsoleFormatter());
-
-        logger.setUseParentHandlers(false);
-        logger.addHandler(consoleHandler);
-
-        logger.info("Starting server...");
-
-        new Main(new NetworkManager(logger));
-    }
-
-    public static EventBus getEventBus() {
-        return eventBus;
-    }
-
+public interface Event {
+    //
 }

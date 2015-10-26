@@ -26,6 +26,7 @@ package org.poweredrails.rails.net.session;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
+import org.poweredrails.rails.Main;
 import org.poweredrails.rails.net.packet.Packet;
 
 import java.util.Random;
@@ -69,6 +70,7 @@ public class Session {
      * @param packet packet
      */
     public void sendPacket(Packet<?> packet) {
+        Main.getEventBus().firePacket(packet);
         this.channel.writeAndFlush(packet);
     }
 

@@ -24,6 +24,7 @@
  */
 package org.poweredrails.rails.net.handler;
 
+import org.poweredrails.rails.Main;
 import org.poweredrails.rails.net.handler.handshake.HandshakePacketHandler;
 import org.poweredrails.rails.net.handler.login.LoginPacketHandler;
 import org.poweredrails.rails.net.handler.status.StatusPacketHandler;
@@ -56,6 +57,7 @@ public class HandlerRegistry {
         T handler = getHandler(clazz);
 
         if (handler != null) {
+            Main.getEventBus().firePacket(packet);
             packet.handle(handler);
         }
     }
