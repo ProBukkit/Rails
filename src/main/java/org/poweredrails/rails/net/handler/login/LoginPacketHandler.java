@@ -28,6 +28,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.poweredrails.rails.net.packet.login.PacketReceiveEncryptResponse;
 import org.poweredrails.rails.net.packet.login.PacketReceiveLoginStart;
+import org.poweredrails.rails.net.packet.login.PacketSendDisconnect;
 import org.poweredrails.rails.net.packet.login.PacketSendEncryptRequest;
 import org.poweredrails.rails.net.session.Session;
 import org.poweredrails.rails.util.UUIDUtil;
@@ -90,94 +91,75 @@ public class LoginPacketHandler {
      * @param packet encrypt response packet
      */
     public void onEncryptResponse(PacketReceiveEncryptResponse packet) {
-        this.logger.info("Received a PacketReceiveEncryptResponse from a User.");
-
         final Session sender = packet.getSender();
 
-        Cipher cipher = null;
         try {
-            cipher = Cipher.getInstance("RSA");
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to get an instance of a RSA cipher!", e);
-        }
+            Cipher cipher = Cipher.getInstance("RSA");
 
-        SecretKey sharedSecret = null;
-        try {
             cipher.init(Cipher.DECRYPT_MODE, this.privateKey);
-            sharedSecret = new SecretKeySpec(cipher.doFinal(packet.getSharedSecret()), "AES");
-        } catch (Exception e) {
-            // TODO: More accurately defined exception.
-            throw new RuntimeException("...", e);
-        }
+            SecretKey sharedSecret = new SecretKeySpec(cipher.doFinal(packet.getSharedSecret()), "AES");
 
-        byte[] verifyToken = null;
-        try {
             cipher.init(Cipher.DECRYPT_MODE, this.privateKey);
-            verifyToken = cipher.doFinal(packet.getVerifyToken());
-        } catch (Exception e) {
-            // TODO: More accurately defined exception.
-            throw new RuntimeException("...", e);
-        }
+            byte[] verifyToken = cipher.doFinal(packet.getVerifyToken());
 
-        if (!Arrays.equals(verifyToken, sender.getVerifyToken())) {
-            // TODO: Disconnect user instead!
-            throw new RuntimeException("Invalid verify token!");
-        }
+            if (!Arrays.equals(verifyToken, sender.getVerifyToken())) {
+                // TODO: Add disconnect description
+                PacketSendDisconnect response = new PacketSendDisconnect("...");
+//                sender.sendPacket(response);
+                return;
+            }
 
-        // session.enableEncryption(sharedSecret);
+            // sender.enableEncryption(sharedSecret);
 
-        String hash;
-        try {
             final MessageDigest digest = MessageDigest.getInstance("SHA-1");
             digest.update(sender.getSessionId().getBytes());
             digest.update(sharedSecret.getEncoded());
             digest.update(this.publicKey);
+            String hash = new BigInteger(digest.digest()).toString(16);
 
-            hash = new BigInteger(digest.digest()).toString(16);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to generate SHA-1 digest!", e);
-        }
+            new Thread(() -> {
+                final String baseUrl = "https://sessionserver.mojang.com/session/minecraft/hasJoined?username=%s&serverId=%s";
 
-        new Thread(() -> {
-            final String baseUrl = "https://sessionserver.mojang.com/session/minecraft/hasJoined?username=%s&serverId=%s";
-
-            URLConnection connection = null;
-            try {
-                connection = new URL(String.format(baseUrl, sender.getVerifyUsername(), hash)).openConnection();
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to open a connection to Mojang!", e);
-            }
-
-            JSONObject response = null;
-            try {
-                final InputStream in = connection.getInputStream();
-                BufferedReader br = new BufferedReader(new InputStreamReader(in));
-                StringBuilder builder = new StringBuilder();
-                String line = null;
-                while ((line = br.readLine()) != null) {
-                    builder.append(line).append('\n');
+                URLConnection connection = null;
+                try {
+                    connection = new URL(String.format(baseUrl, sender.getVerifyUsername(), hash)).openConnection();
+                } catch (IOException e) {
+                    throw new RuntimeException("Failed to open a connection to Mojang!", e);
                 }
 
-                response = new JSONObject(builder.toString());
-            } catch (Exception e) {
-                // TODO: Disconnect user instead!
-                throw new RuntimeException("Failed to verify username!", e);
-            }
-            String name = null;
-            String id   = null;
-            try {
-                name = response.getString("name");
-                id   = response.getString("id");
-            } catch (JSONException e) {
-                throw new RuntimeException("Failed to parse Mojang JSON response!", e);
-            }
+                JSONObject response = null;
+                try {
+                    final InputStream in = connection.getInputStream();
+                    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                    StringBuilder builder = new StringBuilder();
+                    String line = null;
+                    while ((line = br.readLine()) != null) {
+                        builder.append(line).append('\n');
+                    }
 
-            UUID uuid = UUIDUtil.fromFlatString(id);
+                    response = new JSONObject(builder.toString());
+                } catch (Exception e) {
+                    // TODO: Disconnect user instead!
+                    throw new RuntimeException("Failed to verify username!", e);
+                }
+                String name = null;
+                String id   = null;
+                try {
+                    name = response.getString("name");
+                    id   = response.getString("id");
+                } catch (JSONException e) {
+                    throw new RuntimeException("Failed to parse Mojang JSON response!", e);
+                }
+
+                UUID uuid = UUIDUtil.fromFlatString(id);
                 // TODO: Player Properties
                 // TODO: Create new Profile
                 // TODO: Dispatch PlayerLoginEvent
-            this.logger.info("Successfully authenticated Player [" + name + ", " + uuid + "].");
-        }).start();
+                this.logger.info("Successfully authenticated Player [" + name + ", " + uuid + "].");
+            }).start();
+        } catch (Exception e) {
+            throw new RuntimeException("An exception occurred while validating a login!", e);
+        }
     }
 
 }
