@@ -34,7 +34,6 @@ import org.poweredrails.rails.util.UUIDUtil;
 import org.poweredrails.rails.util.crypto.EncryptUtil;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
@@ -103,8 +102,8 @@ public class LoginPacketHandler {
 
             if (!Arrays.equals(verifyToken, sender.getVerifyToken())) {
                 // TODO: Send disconnect packet
-//                PacketSendDisconnect response = new PacketSendDisconnect("...");
-//                sender.sendPacket(response);
+                // PacketSendDisconnect response = new PacketSendDisconnect("...");
+                // sender.sendPacket(response);
                 return;
             }
 
@@ -117,30 +116,8 @@ public class LoginPacketHandler {
             String hash = new BigInteger(digest.digest()).toString(16);
 
             new Thread(() -> {
-                final String baseUrl = "https://sessionserver.mojang.com/session/minecraft/hasJoined?username=%s&serverId=%s";
+                JSONObject response = this.callAPI(sender.getVerifyUsername(), hash);
 
-                URLConnection connection = null;
-                try {
-                    connection = new URL(String.format(baseUrl, sender.getVerifyUsername(), hash)).openConnection();
-                } catch (IOException e) {
-                    throw new RuntimeException("Failed to open a connection to Mojang!", e);
-                }
-
-                JSONObject response = null;
-                try {
-                    final InputStream in = connection.getInputStream();
-                    BufferedReader br = new BufferedReader(new InputStreamReader(in));
-                    StringBuilder builder = new StringBuilder();
-                    String line = null;
-                    while ((line = br.readLine()) != null) {
-                        builder.append(line).append('\n');
-                    }
-
-                    response = new JSONObject(builder.toString());
-                } catch (Exception e) {
-                    // TODO: Disconnect user instead!
-                    throw new RuntimeException("Failed to verify username!", e);
-                }
                 String name = null;
                 String id   = null;
                 try {
@@ -158,6 +135,25 @@ public class LoginPacketHandler {
             }).start();
         } catch (Exception e) {
             throw new RuntimeException("An exception occurred while validating a login!", e);
+        }
+    }
+
+    private JSONObject callAPI(String username, String hash) {
+        final String baseUrl = "https://sessionserver.mojang.com/session/minecraft/hasJoined?username=%s&serverId=%s";
+        try {
+            URLConnection connection = new URL(String.format(baseUrl, username, hash)).openConnection();
+
+            final InputStream in = connection.getInputStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            StringBuilder builder = new StringBuilder();
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                builder.append(line).append('\n');
+            }
+
+            return new JSONObject(builder.toString());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to verify username!", e);
         }
     }
 
