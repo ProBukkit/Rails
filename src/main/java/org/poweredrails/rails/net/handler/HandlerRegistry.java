@@ -29,7 +29,6 @@ import org.poweredrails.rails.net.handler.handshake.HandshakePacketHandler;
 import org.poweredrails.rails.net.handler.login.LoginPacketHandler;
 import org.poweredrails.rails.net.handler.status.StatusPacketHandler;
 import org.poweredrails.rails.net.packet.Packet;
-import org.poweredrails.rails.net.session.Session;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +56,7 @@ public class HandlerRegistry {
         T handler = getHandler(clazz);
 
         // If the handler isn't null AND when firing the packet event, it wasn't cancelled...
-        if (handler != null && !Main.getEventBus().firePacket(packet)) {
+        if (handler != null && !Main.getEventBus().firePacket(packet.getSender(), packet)) {
             // have the handler handle it
             packet.handle(handler);
         }

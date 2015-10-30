@@ -25,6 +25,7 @@
 package org.poweredrails.rails.event;
 
 import org.poweredrails.rails.net.packet.Packet;
+import org.poweredrails.rails.net.session.Session;
 
 public class EventBus {
 
@@ -46,12 +47,13 @@ public class EventBus {
 
     /**
      * Fires a packet event for the packet.
+     * @param session the client session receiving/sending the packet
      * @param packet the packet
      * @param <T> the packet type
      * @return true if the packet was cancelled
      */
-    public <T extends Packet<?>> boolean firePacket(T packet) {
-        return this.dispatcher.dispatchPacket(packet);
+    public <T extends Packet<?>> boolean firePacket(Session session, T packet) {
+        return this.dispatcher.dispatchPacket(session, packet);
     }
 
     /**

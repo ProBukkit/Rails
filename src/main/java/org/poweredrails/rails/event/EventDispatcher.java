@@ -25,6 +25,7 @@
 package org.poweredrails.rails.event;
 
 import org.poweredrails.rails.net.packet.Packet;
+import org.poweredrails.rails.net.session.Session;
 
 import java.util.List;
 
@@ -57,14 +58,16 @@ public class EventDispatcher {
 
     /**
      * Dispatches a packet event across its handlers, for a packet.
+     * @param session the client session that the packet should encompass
      * @param packet the packet to dispatch
      * @param <T> the packet type
      * @return true if the packet was cancelled
      */
-    public <T extends Packet<?>> boolean dispatchPacket(T packet) {
+    public <T extends Packet<?>> boolean dispatchPacket(Session session, T packet) {
         List<EventHandler> handlers = this.registry.getHandlersFor(packet);
 
         PacketEvent<T> event = new PacketEvent<>(packet);
+        event.setClient(session);
 
         for (EventHandler handler : handlers) {
             if (handler.ignoresCancelled() && event.isCancelled()) {

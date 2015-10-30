@@ -26,6 +26,7 @@ package org.poweredrails.rails.event;
 
 import com.google.common.reflect.TypeToken;
 import org.poweredrails.rails.net.packet.Packet;
+import org.poweredrails.rails.net.session.Session;
 
 /**
  * A class used by event handlers to specify what packet it should be fired for.
@@ -37,6 +38,7 @@ public class PacketEvent<T extends Packet<?>> extends CancellableEvent {
         private static final long serialVersionUID = 103948516358702773L;
     };
 
+    private Session client;
     private final T packet;
 
     public PacketEvent(T packet) {
@@ -45,6 +47,14 @@ public class PacketEvent<T extends Packet<?>> extends CancellableEvent {
 
     public T getPacket() {
         return this.packet;
+    }
+
+    public Session getClient() {
+        return this.client;
+    }
+
+    public void setClient(Session client) {
+        this.client = client;
     }
 
     @SuppressWarnings("unchecked")
