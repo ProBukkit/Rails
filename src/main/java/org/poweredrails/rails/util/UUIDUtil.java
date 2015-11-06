@@ -22,49 +22,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.net.packet.handshake;
+package org.poweredrails.rails.util;
 
-import org.poweredrails.rails.net.buffer.Buffer;
-import org.poweredrails.rails.net.handler.handshake.HandshakePacketHandler;
-import org.poweredrails.rails.net.packet.Packet;
+import java.util.UUID;
 
-public class PacketReceiveHandshake extends Packet<HandshakePacketHandler> {
+public class UUIDUtil {
 
-    private int protocol;
-    private String address;
-    private int port;
-    private int state;
+    /**
+     * Parses and returns the UUID from a flat string.
+     * @param str the flat string to converet
+     * @return the parsed uuid
+     */
+    public static UUID fromFlatString(String str) {
+        // xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        String parsed = new StringBuilder(str)
+                .insert(8,  "-")
+                .insert(13, "-")
+                .insert(18, "-")
+                .insert(23, "-")
+                .toString();
 
-    @Override
-    public void toBuffer(Buffer buffer) {}
-
-    @Override
-    public void fromBuffer(Buffer buffer) {
-        this.protocol = buffer.readVarInt();
-        this.address  = buffer.readString();
-        this.port     = buffer.readUnsignedShort();
-        this.state    = buffer.readVarInt();
+        return UUID.fromString(parsed);
     }
 
-    @Override
-    public void handle(HandshakePacketHandler handler) {
-        handler.onHandshakePacket(this);
-    }
-
-    public int getProtocol() {
-        return this.protocol;
-    }
-
-    public String getAddress() {
-        return this.address;
-    }
-
-    public int getPort() {
-        return this.port;
-    }
-
-    public int getState() {
-        return this.state;
+    /**
+     * Removes the dashes from the UUID to form a flat string.
+     * @param uuid the uuid to flatten
+     * @return the flattened string
+     */
+    public static String toFlatString(UUID uuid) {
+        String str = uuid.toString();
+        return str.replace("-", "");
     }
 
 }

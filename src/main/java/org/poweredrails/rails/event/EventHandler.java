@@ -22,49 +22,51 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.net.packet.handshake;
+package org.poweredrails.rails.event;
 
-import org.poweredrails.rails.net.buffer.Buffer;
-import org.poweredrails.rails.net.handler.handshake.HandshakePacketHandler;
+import com.google.common.reflect.TypeToken;
 import org.poweredrails.rails.net.packet.Packet;
 
-public class PacketReceiveHandshake extends Packet<HandshakePacketHandler> {
+import java.lang.reflect.Method;
 
-    private int protocol;
-    private String address;
-    private int port;
-    private int state;
+public class EventHandler {
 
-    @Override
-    public void toBuffer(Buffer buffer) {}
+    private Listener listener;
+    private Method method;
+    private TypeToken<?> eventTypeToken;
+    private Subscribe annotation;
 
-    @Override
-    public void fromBuffer(Buffer buffer) {
-        this.protocol = buffer.readVarInt();
-        this.address  = buffer.readString();
-        this.port     = buffer.readUnsignedShort();
-        this.state    = buffer.readVarInt();
+    public EventHandler(Listener listener, Method method, TypeToken<?> eventTypeToken, Subscribe annotation) {
+        this.listener = listener;
+        this.method   = method;
+        this.eventTypeToken = eventTypeToken;
+        this.annotation = annotation;
     }
 
-    @Override
-    public void handle(HandshakePacketHandler handler) {
-        handler.onHandshakePacket(this);
+    public boolean handlesEvent(Class<? extends Event> clazz) {
+        return clazz.equals(this.eventTypeToken.getRawType());
     }
 
-    public int getProtocol() {
-        return this.protocol;
+    public boolean handlesPacket(Packet<?> packet) {
+        Class<?> clazz = packet.getClass();
+        Class<?> actualClass = this.eventTypeToken.resolveType(PacketEvent.class.getTypeParameters()[0]).getRawType();
+        return clazz.equals(actualClass);
     }
 
-    public String getAddress() {
-        return this.address;
+    public void handle(Event event) {
+        try {
+            this.method.invoke(this.listener, event);
+        } catch (Exception e) {
+            throw new RuntimeException("An exception occurred whilst handling an event!", e);
+        }
     }
 
-    public int getPort() {
-        return this.port;
+    public EventPriority getPriority() {
+        return this.annotation.priority();
     }
 
-    public int getState() {
-        return this.state;
+    public boolean ignoresCancelled() {
+        return this.annotation.ignoreCancelled();
     }
 
 }

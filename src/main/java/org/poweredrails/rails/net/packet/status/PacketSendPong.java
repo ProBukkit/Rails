@@ -24,17 +24,11 @@
  */
 package org.poweredrails.rails.net.packet.status;
 
-import static io.netty.buffer.Unpooled.buffer;
-
 import org.poweredrails.rails.net.buffer.Buffer;
-import org.poweredrails.rails.net.handler.HandlerRegistry;
 import org.poweredrails.rails.net.handler.status.StatusPacketHandler;
 import org.poweredrails.rails.net.packet.Packet;
-import org.poweredrails.rails.net.session.Session;
 
 public class PacketSendPong extends Packet<StatusPacketHandler> {
-
-    private static final long serialVersionUID = -2723965969030497146L;
 
     private long time;
 
@@ -48,12 +42,9 @@ public class PacketSendPong extends Packet<StatusPacketHandler> {
     }
 
     @Override
-    public void fromBuffer(Buffer buffer) {
-
-    }
+    public void fromBuffer(Buffer buffer) {}
 
     @Override
-    public void handle(Session session, StatusPacketHandler handler) {
-    }
+    public void handle(StatusPacketHandler handler) {}
 
 }

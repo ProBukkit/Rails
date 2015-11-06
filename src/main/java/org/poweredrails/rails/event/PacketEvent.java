@@ -22,49 +22,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.net.packet.handshake;
+package org.poweredrails.rails.event;
 
-import org.poweredrails.rails.net.buffer.Buffer;
-import org.poweredrails.rails.net.handler.handshake.HandshakePacketHandler;
+import com.google.common.reflect.TypeToken;
 import org.poweredrails.rails.net.packet.Packet;
+import org.poweredrails.rails.net.session.Session;
 
-public class PacketReceiveHandshake extends Packet<HandshakePacketHandler> {
+/**
+ * A class used by event handlers to specify what packet it should be fired for.
+ * @param <T> the packet type
+ */
+public class PacketEvent<T extends Packet<?>> extends CancellableEvent {
 
-    private int protocol;
-    private String address;
-    private int port;
-    private int state;
+    private final TypeToken<T> token = new TypeToken<T>(getClass()) {
+        private static final long serialVersionUID = 103948516358702773L;
+    };
 
-    @Override
-    public void toBuffer(Buffer buffer) {}
+    private Session client;
+    private final T packet;
 
-    @Override
-    public void fromBuffer(Buffer buffer) {
-        this.protocol = buffer.readVarInt();
-        this.address  = buffer.readString();
-        this.port     = buffer.readUnsignedShort();
-        this.state    = buffer.readVarInt();
+    public PacketEvent(T packet) {
+        this.packet = packet;
     }
 
-    @Override
-    public void handle(HandshakePacketHandler handler) {
-        handler.onHandshakePacket(this);
+    public T getPacket() {
+        return this.packet;
     }
 
-    public int getProtocol() {
-        return this.protocol;
+    public Session getClient() {
+        return this.client;
     }
 
-    public String getAddress() {
-        return this.address;
+    public void setClient(Session client) {
+        this.client = client;
     }
 
-    public int getPort() {
-        return this.port;
-    }
-
-    public int getState() {
-        return this.state;
+    @SuppressWarnings("unchecked")
+    public Class<T> getPacketClass() {
+        return (Class<T>) this.token.getRawType();
     }
 
 }

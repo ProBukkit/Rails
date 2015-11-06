@@ -22,15 +22,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails;
+package org.poweredrails.rails.event;
 
-public class TemporaryPlaceHolder {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    /*
-     *  Temporary Place Holder
-     *
-     *  This is the most important class in the project.
-     *  Carefully observe this class to understand our systems.
+/**
+ * The annotation in which event handlers encompass.
+ */
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Subscribe {
+
+    /**
+     * Returns the priority of the listener. By default, this is NORMAL.
+     * @return the event priority
      */
+    EventPriority priority() default EventPriority.NORMAL;
+
+    /**
+     * Returns whether the event handler should ignore previously cancelled events. By default, this is false.
+     * @return true if the handler should ignore cancelled
+     */
+    boolean ignoreCancelled() default false;
 
 }

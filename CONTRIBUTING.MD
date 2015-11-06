@@ -1,6 +1,13 @@
 # Contributing
 
-We will always have a need for developers to help us improve Rails. If you are a developer and are interested in helping then please do not hesitate. Just make sure you follow our guidelines.
+We'll always need developers to help us improve Rails. If you're a developer and willing to help out then please don't hestitate -- just make sure you follow our guidelines!
+
+When contributing code to the repository you'll want to create a pull-request, and you may need to create a branch.
+If you're adding a new feature, use the naming scheme `feature/name`. Note: the name should be descriptive, but not
+excessively. For example: `feature/fix-inventories`.
+If you're implementing a fix to an issue, use the scheme `issue/id` -- where id is the id of the GitHub issue.
+Quick fixes that require only one commit and only change perhaps a line or two may be done directly on the `dev` branch.
+However, if these changes are likely to cause merge issues, ensure you create a new branch.
 
 Overall, our guidelines strongly follow those of [Google's Java Style Guidelines](https://google-styleguide.googlecode.com/svn/trunk/javaguide.html) with a few modifications.
 
@@ -16,6 +23,7 @@ Overall, our guidelines strongly follow those of [Google's Java Style Guidelines
   * Use Google’s, You will have to configure this in your IDE.
     * IntelliJ IDEA: `Settings → Project Settings → Code Style → Java → Imports`
     * NetBeans: `Options → Editor → Formatting → Java → Imports`
+    * Eclipse: `Preferences → Java → Code Style → Organize Imports`
 * Indentation
   * Use only four spaces for indentations, do not use two spaces
 * Vertical whitespace
@@ -42,8 +50,8 @@ Overall, our guidelines strongly follow those of [Google's Java Style Guidelines
 It is recommended that you read Google's Java conventions, due to being two very long documents here is some quick start properly formatted example code
 
 ```
-/* 
- * Apache Licensing 
+/*
+ * Apache Licensing
  */
 
 package com.example.java;
@@ -97,9 +105,9 @@ Heres an example of a properly formatted code in an interface:
 
 ```
 /*
- * Apache Licensing 
+ * Apache Licensing
  */
- 
+
 package com.example.java;
 
 /**
@@ -114,7 +122,7 @@ public interface Example extends AnotherInterface, ExampleInterface {
      * @return The entity uuid
      */
     String getName(Entity entity);
-    
+
     /**
      * Checks to see if {@link World} contains an {@link Entity}.
      *

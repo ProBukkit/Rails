@@ -39,25 +39,27 @@ public class StatusPacketHandler {
 
     /**
      * Handles a status request packet.
-     * @param session sender
      * @param packet status request packet
-     * @throws JSONException if the
+     * @throws JSONException if the response JSON failed to construct.
      */
-    public void onStatusRequestPacket(Session session, PacketReceiveStatusRequest packet) throws JSONException {
+    public void onStatusRequestPacket(PacketReceiveStatusRequest packet) throws JSONException {
+        Session sender = packet.getSender();
+
         PacketSendStatusResponse response = new PacketSendStatusResponse();
-        session.sendPacket(response);
+        sender.sendPacket(response);
 
         this.logger.info("Responded to a status request.");
     }
 
     /**
      * Handles a ping packet.
-     * @param session sender
      * @param packet ping packet
      */
-    public void onPingPacket(Session session, PacketReceivePing packet) {
+    public void onPingPacket(PacketReceivePing packet) {
+        Session sender = packet.getSender();
+
         PacketSendPong response = new PacketSendPong(packet.getTime());
-        session.sendPacket(response);
+        sender.sendPacket(response);
     }
 
 }

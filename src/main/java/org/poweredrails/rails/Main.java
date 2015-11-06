@@ -24,6 +24,7 @@
  */
 package org.poweredrails.rails;
 
+import org.poweredrails.rails.event.EventBus;
 import org.poweredrails.rails.log.ConsoleFormatter;
 import org.poweredrails.rails.net.NetworkManager;
 
@@ -34,6 +35,7 @@ import java.util.logging.Logger;
 public class Main {
 
     private static final Logger logger = Logger.getLogger("Rails");
+    private static EventBus eventBus = new EventBus();
 
     protected Main(NetworkManager networkManager) {
         this(networkManager, "localhost", 25565);
@@ -49,16 +51,18 @@ public class Main {
      */
     public static void main(String[] args) {
         ConsoleHandler consoleHandler = new ConsoleHandler();
-        ConsoleFormatter consoleFormatter = new ConsoleFormatter();
-        consoleHandler.setFormatter(consoleFormatter);
+        consoleHandler.setFormatter(new ConsoleFormatter());
 
         logger.setUseParentHandlers(false);
         logger.addHandler(consoleHandler);
 
         logger.info("Starting server...");
 
-        NetworkManager networkManager = new NetworkManager(logger);
-        new Main(networkManager);
+        new Main(new NetworkManager(logger));
+    }
+
+    public static EventBus getEventBus() {
+        return eventBus;
     }
 
 }

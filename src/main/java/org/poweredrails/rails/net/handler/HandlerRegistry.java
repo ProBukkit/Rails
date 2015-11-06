@@ -24,11 +24,11 @@
  */
 package org.poweredrails.rails.net.handler;
 
+import org.poweredrails.rails.Main;
 import org.poweredrails.rails.net.handler.handshake.HandshakePacketHandler;
 import org.poweredrails.rails.net.handler.login.LoginPacketHandler;
 import org.poweredrails.rails.net.handler.status.StatusPacketHandler;
 import org.poweredrails.rails.net.packet.Packet;
-import org.poweredrails.rails.net.session.Session;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,15 +49,16 @@ public class HandlerRegistry {
     /**
      * Calls the handle method on a packet.
      * @param <T> handler type
-     * @param session session
      * @param packet packet
      */
-    public <T> void onHandle(Session session, Packet<T> packet) {
+    public <T> void doHandle(Packet<T> packet) {
         Class<T> clazz = packet.getHandlerClass();
-        T handler = this.getHandler(clazz);
+        T handler = getHandler(clazz);
 
-        if (handler != null) {
-            packet.handle(session, handler);
+        // If the handler isn't null AND when firing the packet event, it wasn't cancelled...
+        if (handler != null && !Main.getEventBus().firePacket(packet.getSender(), packet)) {
+            // have the handler handle it
+            packet.handle(handler);
         }
     }
 

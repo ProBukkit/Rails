@@ -22,49 +22,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.net.packet.handshake;
+package org.poweredrails.rails.net.packet.login;
 
 import org.poweredrails.rails.net.buffer.Buffer;
-import org.poweredrails.rails.net.handler.handshake.HandshakePacketHandler;
+import org.poweredrails.rails.net.handler.login.LoginPacketHandler;
 import org.poweredrails.rails.net.packet.Packet;
 
-public class PacketReceiveHandshake extends Packet<HandshakePacketHandler> {
+public class PacketSendEncryptRequest extends Packet<LoginPacketHandler> {
 
-    private int protocol;
-    private String address;
-    private int port;
-    private int state;
+    private String sessionId;
+    private byte[] publicKey;
+    private byte[] verifyKey;
 
-    @Override
-    public void toBuffer(Buffer buffer) {}
-
-    @Override
-    public void fromBuffer(Buffer buffer) {
-        this.protocol = buffer.readVarInt();
-        this.address  = buffer.readString();
-        this.port     = buffer.readUnsignedShort();
-        this.state    = buffer.readVarInt();
+    public PacketSendEncryptRequest(String sessionId, byte[] publicKey, byte[] verifyKey) {
+        this.sessionId = sessionId;
+        this.publicKey = publicKey;
+        this.verifyKey = verifyKey;
     }
 
     @Override
-    public void handle(HandshakePacketHandler handler) {
-        handler.onHandshakePacket(this);
+    public void toBuffer(Buffer buffer) {
+        buffer.writeString(this.sessionId);
+        buffer.writeByteArray(this.publicKey);
+        buffer.writeByteArray(this.verifyKey);
     }
 
-    public int getProtocol() {
-        return this.protocol;
-    }
+    @Override
+    public void fromBuffer(Buffer buffer) {}
 
-    public String getAddress() {
-        return this.address;
-    }
-
-    public int getPort() {
-        return this.port;
-    }
-
-    public int getState() {
-        return this.state;
-    }
+    @Override
+    public void handle(LoginPacketHandler handler) {}
 
 }

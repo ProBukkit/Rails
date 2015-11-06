@@ -22,49 +22,54 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.net.packet.handshake;
+package org.poweredrails.rails.event;
 
-import org.poweredrails.rails.net.buffer.Buffer;
-import org.poweredrails.rails.net.handler.handshake.HandshakePacketHandler;
 import org.poweredrails.rails.net.packet.Packet;
+import org.poweredrails.rails.net.session.Session;
 
-public class PacketReceiveHandshake extends Packet<HandshakePacketHandler> {
+public class EventBus {
 
-    private int protocol;
-    private String address;
-    private int port;
-    private int state;
+    private final ListenerRegistry registry;
+    private final EventDispatcher dispatcher;
 
-    @Override
-    public void toBuffer(Buffer buffer) {}
-
-    @Override
-    public void fromBuffer(Buffer buffer) {
-        this.protocol = buffer.readVarInt();
-        this.address  = buffer.readString();
-        this.port     = buffer.readUnsignedShort();
-        this.state    = buffer.readVarInt();
+    public EventBus() {
+        this.registry   = new ListenerRegistry();
+        this.dispatcher = new EventDispatcher(this.registry);
     }
 
-    @Override
-    public void handle(HandshakePacketHandler handler) {
-        handler.onHandshakePacket(this);
+    /**
+     * Fires an event.
+     * @param event the event
+     */
+    public void fire(Event event) {
+        this.dispatcher.dispatch(event);
     }
 
-    public int getProtocol() {
-        return this.protocol;
+    /**
+     * Fires a packet event for the packet.
+     * @param session the client session receiving/sending the packet
+     * @param packet the packet
+     * @param <T> the packet type
+     * @return true if the packet was cancelled
+     */
+    public <T extends Packet<?>> boolean firePacket(Session session, T packet) {
+        return this.dispatcher.dispatchPacket(session, packet);
     }
 
-    public String getAddress() {
-        return this.address;
+    /**
+     * Registers a listener.
+     * @param listener the listener
+     */
+    public void registerListener(Listener listener) {
+        this.registry.register(listener);
     }
 
-    public int getPort() {
-        return this.port;
-    }
-
-    public int getState() {
-        return this.state;
+    /**
+     * Unregisters a listener.
+     * @param listener the listener
+     */
+    public void unregisterListener(Listener listener) {
+        this.registry.unregister(listener);
     }
 
 }

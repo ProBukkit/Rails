@@ -30,8 +30,6 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
 import org.poweredrails.rails.net.channel.ServerChannelInitializer;
 import org.poweredrails.rails.net.handler.HandlerRegistry;
 import org.poweredrails.rails.net.packet.registry.PacketRegistry;

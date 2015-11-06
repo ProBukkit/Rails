@@ -22,49 +22,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.net.packet.handshake;
+package org.poweredrails.rails.event;
 
-import org.poweredrails.rails.net.buffer.Buffer;
-import org.poweredrails.rails.net.handler.handshake.HandshakePacketHandler;
-import org.poweredrails.rails.net.packet.Packet;
-
-public class PacketReceiveHandshake extends Packet<HandshakePacketHandler> {
-
-    private int protocol;
-    private String address;
-    private int port;
-    private int state;
-
-    @Override
-    public void toBuffer(Buffer buffer) {}
-
-    @Override
-    public void fromBuffer(Buffer buffer) {
-        this.protocol = buffer.readVarInt();
-        this.address  = buffer.readString();
-        this.port     = buffer.readUnsignedShort();
-        this.state    = buffer.readVarInt();
-    }
-
-    @Override
-    public void handle(HandshakePacketHandler handler) {
-        handler.onHandshakePacket(this);
-    }
-
-    public int getProtocol() {
-        return this.protocol;
-    }
-
-    public String getAddress() {
-        return this.address;
-    }
-
-    public int getPort() {
-        return this.port;
-    }
-
-    public int getState() {
-        return this.state;
-    }
-
+public interface Event {
+    //
 }

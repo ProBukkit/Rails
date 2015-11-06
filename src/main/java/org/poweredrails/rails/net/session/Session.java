@@ -26,15 +26,22 @@ package org.poweredrails.rails.net.session;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
+import org.poweredrails.rails.Main;
 import org.poweredrails.rails.net.packet.Packet;
 
+import java.util.Random;
 import java.util.logging.Logger;
 
 public class Session {
 
+    private final Random random = new Random();
     private final Logger logger = Logger.getLogger("Rails");
 
-    private Channel channel;
+    private final Channel channel;
+    private final String sessionId = Long.toString(this.random.nextLong(), 16).trim();
+
+    private String verifyUsername;
+    private byte[] verifyToken;
 
     private String address;
     private int port;
@@ -63,7 +70,9 @@ public class Session {
      * @param packet packet
      */
     public void sendPacket(Packet<?> packet) {
-        this.channel.writeAndFlush(packet);
+        if (!Main.getEventBus().firePacket(this, packet)) {
+            this.channel.writeAndFlush(packet);
+        }
     }
 
     /**
@@ -80,6 +89,46 @@ public class Session {
      */
     public void setState(SessionStateEnum state) {
         this.state = state;
+    }
+
+    /**
+     * Returns the session ID.
+     * @return session id
+     */
+    public String getSessionId() {
+        return this.sessionId;
+    }
+
+    /**
+     * Returns the verify username for this session.
+     * @return the verify username
+     */
+    public String getVerifyUsername() {
+        return this.verifyUsername;
+    }
+
+    /**
+     * Sets the verify username for this session.
+     * @param verifyUsername the verify username to set it to
+     */
+    public void setVerifyUsername(String verifyUsername) {
+        this.verifyUsername = verifyUsername;
+    }
+
+    /**
+     * Returns the verify token for this session.
+     * @return the verify token
+     */
+    public byte[] getVerifyToken() {
+        return this.verifyToken;
+    }
+
+    /**
+     * Sets the verify token for the session.
+     * @param verifyToken the verify token to set it to
+     */
+    public void setVerifyToken(byte[] verifyToken) {
+        this.verifyToken = verifyToken;
     }
 
     @Override

@@ -25,21 +25,15 @@
 package org.poweredrails.rails.net.packet.status;
 
 import org.poweredrails.rails.net.buffer.Buffer;
-import org.poweredrails.rails.net.handler.HandlerRegistry;
 import org.poweredrails.rails.net.handler.status.StatusPacketHandler;
 import org.poweredrails.rails.net.packet.Packet;
-import org.poweredrails.rails.net.session.Session;
 
 public class PacketReceivePing extends Packet<StatusPacketHandler> {
-
-    private static final long serialVersionUID = -3569249616863264576L;
 
     private long time;
 
     @Override
-    public void toBuffer(Buffer buffer) {
-
-    }
+    public void toBuffer(Buffer buffer) {}
 
     @Override
     public void fromBuffer(Buffer buffer) {
@@ -47,10 +41,8 @@ public class PacketReceivePing extends Packet<StatusPacketHandler> {
     }
 
     @Override
-    public void handle(Session session, StatusPacketHandler handler) {
-        if (handler != null) {
-            handler.onPingPacket(session, this);
-        }
+    public void handle(StatusPacketHandler handler) {
+        handler.onPingPacket(this);
     }
 
     public long getTime() {

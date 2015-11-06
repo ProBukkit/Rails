@@ -24,22 +24,137 @@
  */
 package org.poweredrails.rails.net.handler.login;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.poweredrails.rails.net.packet.login.PacketReceiveEncryptResponse;
 import org.poweredrails.rails.net.packet.login.PacketReceiveLoginStart;
+import org.poweredrails.rails.net.packet.login.PacketSendEncryptRequest;
 import org.poweredrails.rails.net.session.Session;
+import org.poweredrails.rails.util.UUIDUtil;
+import org.poweredrails.rails.util.crypto.EncryptUtil;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.math.BigInteger;
+import java.net.URL;
+import java.net.URLConnection;
+import java.security.KeyPair;
+import java.security.MessageDigest;
+import java.security.PrivateKey;
+import java.util.Arrays;
+import java.util.UUID;
 import java.util.logging.Logger;
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 public class LoginPacketHandler {
 
     private final Logger logger = Logger.getLogger("Rails");
 
+    // TODO: Move this to a move sensible place.
+    private final KeyPair keyPair;
+    private final byte[] publicKey;
+    private final PrivateKey privateKey;
+
+    public LoginPacketHandler() {
+        this.keyPair    = EncryptUtil.generateKeyPair();
+        this.publicKey  = EncryptUtil.toX509(this.keyPair.getPublic()).getEncoded();
+        this.privateKey = this.keyPair.getPrivate();
+    }
+
     /**
      * Handles a login start packet.
-     * @param session sender
      * @param packet login start packet
      */
-    public void onLoginStart(Session session, PacketReceiveLoginStart packet) {
-        this.logger.info("Session " + session + " starting login (" + packet.getName() + ")");
+    public void onLoginStart(PacketReceiveLoginStart packet) {
+        this.logger.info("User [" + packet.getName() + "] logging in...");
+
+        final Session sender = packet.getSender();
+
+        String sessionId = sender.getSessionId();
+        byte[] publicKey = EncryptUtil.toX509(this.keyPair.getPublic()).getEncoded();
+        byte[] verifyKey = EncryptUtil.generateToken(4);
+
+        sender.setVerifyUsername(packet.getName());
+        sender.setVerifyToken(verifyKey);
+
+        PacketSendEncryptRequest response = new PacketSendEncryptRequest(sessionId, publicKey, verifyKey);
+        sender.sendPacket(response);
+    }
+
+    /**
+     * Handles an encrypt response packet.
+     * @param packet encrypt response packet
+     */
+    public void onEncryptResponse(PacketReceiveEncryptResponse packet) {
+        final Session sender = packet.getSender();
+
+        try {
+            Cipher cipher = Cipher.getInstance("RSA");
+
+            cipher.init(Cipher.DECRYPT_MODE, this.privateKey);
+            final SecretKey sharedSecret = new SecretKeySpec(cipher.doFinal(packet.getSharedSecret()), "AES");
+
+            cipher.init(Cipher.DECRYPT_MODE, this.privateKey);
+            final byte[] verifyToken = cipher.doFinal(packet.getVerifyToken());
+
+            if (!Arrays.equals(verifyToken, sender.getVerifyToken())) {
+                // TODO: Send disconnect packet
+                // PacketSendDisconnect response = new PacketSendDisconnect("...");
+                // sender.sendPacket(response);
+                return;
+            }
+
+            // sender.enableEncryption(sharedSecret);
+
+            final MessageDigest digest = MessageDigest.getInstance("SHA-1");
+            digest.update(sender.getSessionId().getBytes());
+            digest.update(sharedSecret.getEncoded());
+            digest.update(this.publicKey);
+            String hash = new BigInteger(digest.digest()).toString(16);
+
+            new Thread(() -> {
+                JSONObject response = this.callAPI(sender.getVerifyUsername(), hash);
+
+                String name = null;
+                String id   = null;
+                try {
+                    name = response.getString("name");
+                    id   = response.getString("id");
+                } catch (JSONException e) {
+                    throw new RuntimeException("Failed to parse Mojang JSON response!", e);
+                }
+
+                UUID uuid = UUIDUtil.fromFlatString(id);
+                // TODO: Player Properties
+                // TODO: Create new Profile
+                // TODO: Dispatch PlayerLoginEvent
+                this.logger.info("Successfully authenticated Player [" + name + ", " + uuid + "].");
+            }).start();
+        } catch (Exception e) {
+            throw new RuntimeException("An exception occurred while validating a login!", e);
+        }
+    }
+
+    private JSONObject callAPI(String username, String hash) {
+        final String baseUrl = "https://sessionserver.mojang.com/session/minecraft/hasJoined?username=%s&serverId=%s";
+        try {
+            URLConnection connection = new URL(String.format(baseUrl, username, hash)).openConnection();
+
+            final InputStream in = connection.getInputStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            StringBuilder builder = new StringBuilder();
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                builder.append(line).append('\n');
+            }
+
+            return new JSONObject(builder.toString());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to verify username!", e);
+        }
     }
 
 }
