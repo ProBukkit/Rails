@@ -23,6 +23,7 @@ Overall, our guidelines strongly follow those of [Google's Java Style Guidelines
   * Use Google’s, You will have to configure this in your IDE.
     * IntelliJ IDEA: `Settings → Project Settings → Code Style → Java → Imports`
     * NetBeans: `Options → Editor → Formatting → Java → Imports`
+    * Eclipse: `Preferences → Java → Code Style → Organize Imports`
 * Indentation
   * Use only four spaces for indentations, do not use two spaces
 * Vertical whitespace
