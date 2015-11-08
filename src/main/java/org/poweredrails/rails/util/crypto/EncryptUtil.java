@@ -29,12 +29,12 @@ import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.Random;
 
 public class EncryptUtil {
 
-    private static Random random = new Random();
+    private static SecureRandom random = new SecureRandom();
 
     /**
      * Generates a KeyPair.
