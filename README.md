@@ -4,9 +4,13 @@ Rails
 
 [![Status][travis-badge]][travis] [![Chat at http://gitter.im/PoweredRails/Rails][gitter-badge]][gitter]
 
-Rails is an open source, free, and independent Minecraft server platform designed with [Java 8] and licensed under the [MIT license]. 
+**Warning**: Rails is under heavy development. Things may change without warning. Make sure you keep up to date with the latest build.
 
- * Status: __Alpha__
+Rails is an open source, free, and independent Minecraft server platform designed with [Java 8] and licensed under the [MIT license].
+
+Come visit our [Forum] for more helpful discussion.
+
+Current version: **v0.1-DEVELOPMENT**
 
 ## Version Map
 
@@ -44,3 +48,4 @@ See the [`CONTRIBUTING.md`][contrib] file for more information on how to contrib
 [travis-badge]: https://travis-ci.org/PoweredRails/Rails.svg?branch=master
 [rails-title]: https://avatars2.githubusercontent.com/u/12877088?s=75
 [contrib]: CONTRIBUTING.MD
+[Forum]: http://forums.poweredrails.org
