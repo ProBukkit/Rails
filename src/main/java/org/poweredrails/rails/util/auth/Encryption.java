@@ -22,22 +22,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.poweredrails.rails.util.crypto;
+package org.poweredrails.rails.util.auth;
 
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.Random;
 
-public class EncryptUtil {
+public class Encryption {
 
-    private static Random random = new Random();
+    private static SecureRandom random = new SecureRandom();
 
     /**
      * Generates a KeyPair.
+     *
      * @return a generated KeyPair
      */
     public static KeyPair generateKeyPair() {
@@ -53,6 +54,7 @@ public class EncryptUtil {
 
     /**
      * Generates an X509 encoded Key from a base.
+     *
      * @param original the base key
      * @return the encoded key
      */
@@ -69,6 +71,7 @@ public class EncryptUtil {
 
     /**
      * Generates a token of the desired length.
+     *
      * @param length the length of the token
      * @return the generated token
      */

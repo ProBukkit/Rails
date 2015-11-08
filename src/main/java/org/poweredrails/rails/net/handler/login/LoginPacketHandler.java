@@ -31,7 +31,7 @@ import org.poweredrails.rails.net.packet.login.PacketReceiveLoginStart;
 import org.poweredrails.rails.net.packet.login.PacketSendEncryptRequest;
 import org.poweredrails.rails.net.session.Session;
 import org.poweredrails.rails.util.UUIDUtil;
-import org.poweredrails.rails.util.crypto.EncryptUtil;
+import org.poweredrails.rails.util.auth.Encryption;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -59,8 +59,8 @@ public class LoginPacketHandler {
     private final PrivateKey privateKey;
 
     public LoginPacketHandler() {
-        this.keyPair    = EncryptUtil.generateKeyPair();
-        this.publicKey  = EncryptUtil.toX509(this.keyPair.getPublic()).getEncoded();
+        this.keyPair    = Encryption.generateKeyPair();
+        this.publicKey  = Encryption.toX509(this.keyPair.getPublic()).getEncoded();
         this.privateKey = this.keyPair.getPrivate();
     }
 
@@ -74,8 +74,8 @@ public class LoginPacketHandler {
         final Session sender = packet.getSender();
 
         String sessionId = sender.getSessionId();
-        byte[] publicKey = EncryptUtil.toX509(this.keyPair.getPublic()).getEncoded();
-        byte[] verifyKey = EncryptUtil.generateToken(4);
+        byte[] publicKey = Encryption.toX509(this.keyPair.getPublic()).getEncoded();
+        byte[] verifyKey = Encryption.generateToken(4);
 
         sender.setVerifyUsername(packet.getName());
         sender.setVerifyToken(verifyKey);
