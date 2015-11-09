@@ -26,10 +26,7 @@ package org.poweredrails.rails.concurrent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class ScheduledQueueExecutor {
 
@@ -73,6 +70,20 @@ public class ScheduledQueueExecutor {
      */
     public ScheduledFuture<?> enqueueAsRepeating(Runnable rnbl, long delay, long period, TimeUnit unit) {
         ScheduledFuture<?> future = this.executor.scheduleAtFixedRate(rnbl, delay, period, unit);
+        this.tasks.add(future);
+        return future;
+    }
+
+    /**
+     * Queue a callable to be executed after the given delay by the executor service.
+     * @param callable the callable to execute
+     * @param delay the delay for the executor service to wait
+     * @param unit the time unit in which the delay is specified in
+     * @param <T> generic object
+     * @return the future object for this task
+     */
+    public <T> ScheduledFuture<T> enqueueCallable(Callable<T> callable, long delay, TimeUnit unit) {
+        ScheduledFuture<T> future = this.executor.schedule(callable, delay, unit);
         this.tasks.add(future);
         return future;
     }
