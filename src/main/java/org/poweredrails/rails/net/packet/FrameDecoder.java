@@ -26,34 +26,53 @@ package org.poweredrails.rails.net.packet;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToByteEncoder;
+import io.netty.handler.codec.ByteToMessageDecoder;
 import org.poweredrails.rails.net.buffer.Buffer;
-import org.poweredrails.rails.net.packet.registry.PacketRegistry;
-import org.poweredrails.rails.net.session.Session;
-import org.poweredrails.rails.net.session.SessionManager;
-import org.poweredrails.rails.net.session.SessionStateEnum;
 
-public class PacketEncoder extends MessageToByteEncoder<Packet<?>> {
+import java.util.List;
 
-    private SessionManager sessionManager;
-    private PacketRegistry registry;
-
-    public PacketEncoder(SessionManager sessionManager, PacketRegistry registry) {
-        this.sessionManager = sessionManager;
-        this.registry = registry;
-    }
+public class FrameDecoder extends ByteToMessageDecoder {
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, Packet<?> packet, ByteBuf buf) throws Exception {
-        Buffer out = new Buffer(buf);
+    protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) throws Exception {
+        Buffer in = new Buffer(buf);
 
-        Session session = this.sessionManager.getSession(ctx.channel());
-        SessionStateEnum state = session.getState();
+        in.markReaderIndex();
+        if (!readableVarInt(buf)) {
+            return;
+        }
 
-        int id = this.registry.find(state, packet);
+        // Read packet length + byte array
+        int length = in.readVarInt(2);
 
-        out.writeVarInt(id, 2);
-        packet.toBuffer(out);
+        // If we don't have the data, return.
+        if (in.readableBytes() < length) {
+            in.resetReaderIndex();
+            return;
+        }
+
+        Buffer buffer = new Buffer( buf.readBytes(length) );
+        out.add(buffer);
+    }
+
+    private static boolean readableVarInt(ByteBuf buf) {
+        if (buf.readableBytes() > 5) {
+            // maximum varint size
+            return true;
+        }
+
+        int idx = buf.readerIndex();
+        byte in;
+        do {
+            if (buf.readableBytes() < 1) {
+                buf.readerIndex(idx);
+                return false;
+            }
+            in = buf.readByte();
+        } while ((in & 0x80) != 0);
+
+        buf.readerIndex(idx);
+        return true;
     }
 
 }

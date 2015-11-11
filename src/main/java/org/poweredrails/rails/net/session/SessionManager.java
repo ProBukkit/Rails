@@ -24,6 +24,7 @@
  */
 package org.poweredrails.rails.net.session;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.ArrayList;
@@ -37,11 +38,24 @@ public class SessionManager {
 
     private List<Session> sessionList = new ArrayList<>();
 
+    public Session getSession(Channel channel) {
+        for (Session session : this.sessionList) {
+            if (session.getChannel().equals(channel)) {
+                return session;
+            }
+        }
+
+        Session session = new Session(channel);
+        this.sessionList.add(session);
+        return session;
+    }
+
     /**
      * Gets an instance of the session for the connection it relates to.
      * @param ctx connection
      * @return session
      */
+    @Deprecated
     public Session getSession(ChannelHandlerContext ctx) {
         for (Session session : this.sessionList) {
             if (session.getChannel().equals(ctx.channel())) {

@@ -24,84 +24,20 @@
  */
 package org.poweredrails.rails.net.packet;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.ByteToMessageDecoder;
-import java.util.List;
-import java.util.Random;
-import java.util.logging.Logger;
+import io.netty.handler.codec.MessageToMessageDecoder;
 import org.poweredrails.rails.net.buffer.Buffer;
-import org.poweredrails.rails.net.packet.registry.PacketRegistry;
-import org.poweredrails.rails.net.session.Session;
-import org.poweredrails.rails.net.session.SessionManager;
 
-public class PacketDecoder extends ByteToMessageDecoder {
+import java.util.List;
 
-    private final Random rand = new Random();
-
-    private final Logger logger;
-
-    private PacketRegistry registry;
-    private SessionManager sessionManager;
-
-    public PacketDecoder(Logger logger, SessionManager sessionManager, PacketRegistry registry) {
-        this.logger = logger;
-        this.sessionManager = sessionManager;
-        this.registry = registry;
-    }
+public class PacketDecoder extends MessageToMessageDecoder<Buffer> {
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        this.logger.severe("An error occurred while decoding:" + cause);
-    }
-
-    @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) throws Exception {
-        Buffer in = new Buffer(buf);
-
-        in.markReaderIndex();
-        if (!readableVarInt(buf)) {
-            return;
-        }
-
-        // Read packet length + byte array
-        int length = in.readVarInt(2);
-
-        // If we don't have the data, return.
-        if (in.readableBytes() < length) {
-            in.resetReaderIndex();
-            return;
-        }
-
-        Buffer buffer = new Buffer( buf.readBytes(length) );
-
-        // Read id + get session
+    protected void decode(ChannelHandlerContext ctx, Buffer buffer, List<Object> out) throws Exception {
         int id = buffer.readVarInt(2);
-        Session session = this.sessionManager.getSession(ctx);
 
-        // Create UnresolvedPacket + add to handler queue
-        UnresolvedPacket packet = new UnresolvedPacket(session, id, buffer);
+        UnresolvedPacket packet = new UnresolvedPacket(id, buffer);
         out.add(packet);
-    }
-
-    private static boolean readableVarInt(ByteBuf buf) {
-        if (buf.readableBytes() > 5) {
-            // maximum varint size
-            return true;
-        }
-
-        int idx = buf.readerIndex();
-        byte in;
-        do {
-            if (buf.readableBytes() < 1) {
-                buf.readerIndex(idx);
-                return false;
-            }
-            in = buf.readByte();
-        } while ((in & 0x80) != 0);
-
-        buf.readerIndex(idx);
-        return true;
     }
 
 }

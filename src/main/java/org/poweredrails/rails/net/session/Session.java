@@ -48,11 +48,16 @@ public class Session {
 
     private SessionStateEnum state = SessionStateEnum.HANDSHAKE;
 
+    public Session(Channel channel) {
+        this.channel = channel;
+    }
+
     /**
      * Creates a new session around the channel handler context, represents the connection between a client
      * and the server.
      * @param ctx connection
      */
+    @Deprecated
     public Session(ChannelHandlerContext ctx) {
         this.channel = ctx.channel();
     }

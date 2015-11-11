@@ -29,19 +29,12 @@ import org.poweredrails.rails.net.session.Session;
 
 public class UnresolvedPacket {
 
-    private Session session;
-
     private int id;
     private Buffer buffer;
 
-    public UnresolvedPacket(Session session, int id, Buffer buffer) {
-        this.session = session;
+    public UnresolvedPacket(int id, Buffer buffer) {
         this.id = id;
         this.buffer = buffer;
-    }
-
-    public Session getSession() {
-        return this.session;
     }
 
     public int getId() {

@@ -28,11 +28,14 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import org.poweredrails.rails.net.handler.HandlerRegistry;
-import org.poweredrails.rails.net.packet.PacketCompressor;
+import org.poweredrails.rails.net.packet.FrameDecoder;
+import org.poweredrails.rails.net.packet.FrameEncoder;
+import org.poweredrails.rails.net.packet.NoopHandler;
 import org.poweredrails.rails.net.packet.PacketDecoder;
 import org.poweredrails.rails.net.packet.PacketEncoder;
 import org.poweredrails.rails.net.packet.PacketHandler;
 import org.poweredrails.rails.net.packet.registry.PacketRegistry;
+import org.poweredrails.rails.net.session.Session;
 import org.poweredrails.rails.net.session.SessionManager;
 
 import java.util.logging.Logger;
@@ -63,11 +66,20 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
 
     @Override
     protected final void initChannel(SocketChannel socketChannel) {
+        final Session session = this.sessionManager.getSession(socketChannel);
+
         ChannelPipeline pl = socketChannel.pipeline();
-        pl.addLast("compressor", new PacketCompressor());
-        pl.addLast("decoder", new PacketDecoder(this.logger, this.sessionManager, this.packetRegistry));
-        pl.addLast("encoder", new PacketEncoder(this.logger, this.sessionManager, this.packetRegistry));
-        pl.addLast("handler", new PacketHandler(this.logger, this.sessionManager, this.packetRegistry,
+
+        pl.addLast("encryption", new NoopHandler());
+        pl.addLast("compression", new NoopHandler());
+
+        pl.addLast("frame_encoder", new FrameEncoder());
+        pl.addLast("frame_decoder", new FrameDecoder());
+
+        pl.addLast("decoder", new PacketDecoder());
+        pl.addLast("encoder", new PacketEncoder(this.sessionManager, this.packetRegistry));
+
+        pl.addLast("handler", new PacketHandler(this.logger, session, this.packetRegistry,
                 this.handlerRegistry));
     }
 

@@ -29,6 +29,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import org.poweredrails.rails.net.buffer.Buffer;
 
+@Deprecated
 public class PacketCompressor extends MessageToByteEncoder<ByteBuf> {
 
     @Override

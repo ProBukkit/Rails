@@ -31,36 +31,30 @@ import org.poweredrails.rails.net.handler.HandlerRegistry;
 import org.poweredrails.rails.net.packet.registry.PacketFactory;
 import org.poweredrails.rails.net.packet.registry.PacketRegistry;
 import org.poweredrails.rails.net.session.Session;
-import org.poweredrails.rails.net.session.SessionManager;
 import org.poweredrails.rails.net.session.SessionStateEnum;
 
 import java.util.logging.Logger;
 
+// TODO: Dispose of session when channel goes inactive.
 public class PacketHandler extends SimpleChannelInboundHandler<UnresolvedPacket> {
 
     private final Logger logger;
 
+    private Session session;
     private PacketRegistry packetRegistry;
     private HandlerRegistry handlerRegistry;
-    private SessionManager sessionManager;
 
-    public PacketHandler(Logger logger, SessionManager sessionManager, PacketRegistry packetRegistry,
+    public PacketHandler(Logger logger, Session session, PacketRegistry packetRegistry,
                          HandlerRegistry handlerRegistry) {
         this.logger = logger;
-        this.sessionManager = sessionManager;
+        this.session = session;
         this.packetRegistry = packetRegistry;
         this.handlerRegistry = handlerRegistry;
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) {
-        this.sessionManager.dispose(ctx);
-    }
-
-    @Override
     protected void channelRead0(ChannelHandlerContext ctx, UnresolvedPacket unresolvedPacket) throws Exception {
-        Session session = unresolvedPacket.getSession();
-        SessionStateEnum state = session.getState();
+        SessionStateEnum state = this.session.getState();
 
         int id = unresolvedPacket.getId();
         Buffer buffer = unresolvedPacket.getBuffer();
@@ -72,7 +66,7 @@ public class PacketHandler extends SimpleChannelInboundHandler<UnresolvedPacket>
         }
 
         Packet<?> packet = factory.create();
-        packet.setSender(session);
+        packet.setSender(this.session);
         packet.fromBuffer(buffer);
 
         this.handlerRegistry.doHandle(packet);
