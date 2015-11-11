@@ -36,7 +36,7 @@ public class PacketCompressor extends MessageToByteEncoder<ByteBuf> {
         Buffer out = new Buffer(buf);
 
         int readableBytes = msg.readableBytes();
-        out.writeVarInt(readableBytes);
+        out.writeVarInt(readableBytes, 2);
         buf.writeBytes(msg);
     }
 

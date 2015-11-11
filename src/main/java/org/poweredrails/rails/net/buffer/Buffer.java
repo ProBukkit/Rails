@@ -27,26 +27,34 @@ package org.poweredrails.rails.net.buffer;
 import com.google.common.base.Charsets;
 import io.netty.buffer.ByteBuf;
 
-import java.nio.charset.Charset;
-
 public class Buffer {
 
-    private ByteBuf buf;
+    private ByteBuf buffer;
 
     /**
      * Constructs a wrapper around the byte buffer provided.
-     * @param buf The byte buffer to wrap around.
+     * @param buffer The byte buffer to wrap around.
      */
-    public Buffer(ByteBuf buf) {
-        this.buf = buf;
+    public Buffer(ByteBuf buffer) {
+        this.buffer = buffer;
     }
 
     /**
      * Returns the byte buffer this class wraps.
      * @return ByteBuf the byte buf
      */
-    public ByteBuf getByteBuf() {
-        return this.buf;
+    public ByteBuf getByteBuffer() {
+        return this.buffer;
+    }
+
+    /**
+     * Returns the var int byte count.
+     * @param value byte value
+     * @return validated byte count
+     */
+    private static int validateVarIntCount(int value) {
+        return (value & 0xFFFFFF80) == 0 ? 1 : ((value & 0xFFFFC000) == 0 ? 2 : ((value & 0xFFE00000) == 0 ? 3
+                : ((value & 0xF0000000) == 0 ? 4 : 5)));
     }
 
     /**
@@ -54,7 +62,7 @@ public class Buffer {
      * @param value integer
      */
     public void writeInt(int value) {
-        this.buf.writeInt(value);
+        this.buffer.writeInt(value);
     }
 
     /**
@@ -62,7 +70,7 @@ public class Buffer {
      * @param value long
      */
     public void writeLong(long value) {
-        this.buf.writeLong(value);
+        this.buffer.writeLong(value);
     }
 
     /**
@@ -70,7 +78,7 @@ public class Buffer {
      * @param value short
      */
     public void writeShort(short value) {
-        this.buf.writeShort(value);
+        this.buffer.writeShort(value);
     }
 
     /**
@@ -78,7 +86,7 @@ public class Buffer {
      * @param value byte
      */
     public void writeByte(byte value) {
-        this.buf.writeByte(value);
+        this.buffer.writeByte(value);
     }
 
     /**
@@ -86,7 +94,7 @@ public class Buffer {
      * @param value integer
      */
     public void writeByte(int value) {
-        this.buf.writeByte(value);
+        this.buffer.writeByte(value);
     }
 
     /**
@@ -94,22 +102,29 @@ public class Buffer {
      * @param value string
      */
     public void writeString(String value) {
-        byte[] array = value.getBytes();
-
-        this.writeVarInt(array.length);
-        this.buf.writeBytes(array);
+        byte[] bytes = value.getBytes(Charsets.UTF_8);
+        if (validateVarIntCount(bytes.length) < 3) {
+            writeVarInt(bytes.length, 2);
+            this.buffer.writeBytes(bytes);
+        } else {
+            throw new RuntimeException("String is too long to be encoded.");
+        }
     }
 
     /**
      * Writes a var int to the byte buffer.
      * @param value integer
+     * @param weight value length
      */
-    public void writeVarInt(int value) {
-        while ((value & -128L) != 0L) {
-            this.writeByte((int) (value & 127L) | 128);
-            value >>>= 7;
+    public void writeVarInt(int value, int weight) {
+        if (validateVarIntCount(value) <= weight) {
+            while ((value & -128) != 0) {
+                this.buffer.writeByte(value & 127 | 128);
+                value >>>= 7;
+            }
+
+            this.buffer.writeByte(value);
         }
-        this.writeByte(value);
     }
 
     /**
@@ -117,8 +132,10 @@ public class Buffer {
      * @param array byte array
      */
     public void writeByteArray(byte[] array) {
-        this.writeVarInt(array.length);
-        this.buf.writeBytes(array);
+        if (validateVarIntCount(array.length) < 3) {
+            this.writeVarInt(array.length, 2);
+            this.buffer.writeBytes(array);
+        }
     }
 
     /**
@@ -126,7 +143,7 @@ public class Buffer {
      * @return integer
      */
     public int readInt() {
-        return this.buf.readInt();
+        return this.buffer.readInt();
     }
 
     /**
@@ -134,7 +151,7 @@ public class Buffer {
      * @return long
      */
     public long readLong() {
-        return this.buf.readLong();
+        return this.buffer.readLong();
     }
 
     /**
@@ -142,7 +159,7 @@ public class Buffer {
      * @return short
      */
     public short readShort() {
-        return this.buf.readShort();
+        return this.buffer.readShort();
     }
 
     /**
@@ -150,7 +167,7 @@ public class Buffer {
      * @return unsigned short
      */
     public int readUnsignedShort() {
-        return this.buf.readUnsignedShort();
+        return this.buffer.readUnsignedShort();
     }
 
     /**
@@ -158,7 +175,7 @@ public class Buffer {
      * @return byte
      */
     public byte readByte() {
-        return this.buf.readByte();
+        return this.buffer.readByte();
     }
 
     /**
@@ -166,7 +183,7 @@ public class Buffer {
      * @return unsigned byte
      */
     public short readUnsignedByte() {
-        return this.buf.readUnsignedByte();
+        return this.buffer.readUnsignedByte();
     }
 
     /**
@@ -174,32 +191,36 @@ public class Buffer {
      * @return string
      */
     public String readString() {
-        int length = this.readVarInt();
-
-        byte[] array = new byte[length];
-        this.buf.readBytes(array, 0, length);
-
-        return new String(array, Charsets.UTF_8);
+        int length = readVarInt(2);
+        String string = this.buffer.toString(this.buffer.readerIndex(), length, Charsets.UTF_8);
+        this.buffer.readerIndex(this.buffer.readerIndex() + length);
+        return string;
     }
 
     /**
      * Reads a var int from the byte buffer.
+     * @param weight value length
      * @return var int
      */
-    public int readVarInt() {
-        int result = 0;
-        int count = 0;
-        while (true) {
-            byte in = readByte();
-            result |= (in & 0x7f) << (count++ * 7);
-            if (count > 5) {
-                throw new RuntimeException("VarInt byte count > 5");
-            }
-            if ((in & 0x80) != 0x80) {
-                break;
-            }
+    public int readVarInt(int weight) {
+        if (weight > 0 && weight < 6) {
+            int result = 0;
+            int count = 0;
+            byte byte0;
+
+            do {
+                byte0 = this.buffer.readByte();
+                result |= (byte0 & 0x7f) << count++ * 7;
+
+                if (count > weight) {
+                    throw new RuntimeException("VarInt was too big. Must be less than " + String.valueOf(weight));
+                }
+            } while ((byte0 & 0x80) == 0x80);
+
+            return result;
+        } else {
+            throw new RuntimeException("VarInt weight must be more than 0 and less than 6, not " + String.valueOf(weight));
         }
-        return result;
     }
 
     /**
@@ -207,8 +228,8 @@ public class Buffer {
      * @return byte array
      */
     public byte[] readByteArray() {
-        int length = this.readVarInt();
-        return this.buf.readBytes(length).array();
+        int length = this.readVarInt(2);
+        return this.buffer.readBytes(length).array();
     }
 
     /**
@@ -216,21 +237,28 @@ public class Buffer {
      * @return amount of bytes
      */
     public int readableBytes() {
-        return this.buf.readableBytes();
+        return this.buffer.readableBytes();
     }
 
     /**
      * Marks the reader index.
      */
     public void markReaderIndex() {
-        this.buf.markReaderIndex();
+        this.buffer.markReaderIndex();
     }
 
     /**
      * Resets the reader index.
      */
     public void resetReaderIndex() {
-        this.buf.resetReaderIndex();
+        this.buffer.resetReaderIndex();
+    }
+
+    /**
+     * Clears the buffer.
+     */
+    public void clearBuffer() {
+        this.buffer.clear();
     }
 
 }

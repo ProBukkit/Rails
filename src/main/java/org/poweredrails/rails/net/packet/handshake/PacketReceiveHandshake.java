@@ -40,10 +40,10 @@ public class PacketReceiveHandshake extends Packet<HandshakePacketHandler> {
 
     @Override
     public void fromBuffer(Buffer buffer) {
-        this.protocol = buffer.readVarInt();
+        this.protocol = buffer.readVarInt(2);
         this.address  = buffer.readString();
         this.port     = buffer.readUnsignedShort();
-        this.state    = buffer.readVarInt();
+        this.state    = buffer.readVarInt(2);
     }
 
     @Override

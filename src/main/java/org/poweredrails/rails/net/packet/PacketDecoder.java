@@ -25,18 +25,15 @@
 package org.poweredrails.rails.net.packet;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
+import java.util.List;
+import java.util.Random;
+import java.util.logging.Logger;
 import org.poweredrails.rails.net.buffer.Buffer;
 import org.poweredrails.rails.net.packet.registry.PacketRegistry;
 import org.poweredrails.rails.net.session.Session;
 import org.poweredrails.rails.net.session.SessionManager;
-import org.poweredrails.rails.net.session.SessionStateEnum;
-
-import java.util.List;
-import java.util.Random;
-import java.util.logging.Logger;
 
 public class PacketDecoder extends ByteToMessageDecoder {
 
@@ -68,7 +65,7 @@ public class PacketDecoder extends ByteToMessageDecoder {
         }
 
         // Read packet length + byte array
-        int length = in.readVarInt();
+        int length = in.readVarInt(2);
 
         // If we don't have the data, return.
         if (in.readableBytes() < length) {
@@ -79,7 +76,7 @@ public class PacketDecoder extends ByteToMessageDecoder {
         Buffer buffer = new Buffer( buf.readBytes(length) );
 
         // Read id + get session
-        int id = buffer.readVarInt();
+        int id = buffer.readVarInt(2);
         Session session = this.sessionManager.getSession(ctx);
 
         // Create UnresolvedPacket + add to handler queue

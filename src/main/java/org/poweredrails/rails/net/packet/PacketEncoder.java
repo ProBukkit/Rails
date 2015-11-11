@@ -57,7 +57,7 @@ public class PacketEncoder extends MessageToByteEncoder<Packet<?>> {
 
         int id = this.registry.find(state, packet);
 
-        out.writeVarInt(id);
+        out.writeVarInt(id, 2);
         packet.toBuffer(out);
     }
 
