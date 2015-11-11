@@ -132,10 +132,10 @@ public class Buffer {
      * @param array byte array
      */
     public void writeByteArray(byte[] array) {
-        if (validateVarIntCount(array.length) < 3) {
-            this.writeVarInt(array.length, 2);
-            this.buffer.writeBytes(array);
-        }
+//        if (validateVarIntCount(array.length) < 3) {
+        this.writeVarInt(array.length, 2);
+        this.buffer.writeBytes(array);
+//        }
     }
 
     /**
