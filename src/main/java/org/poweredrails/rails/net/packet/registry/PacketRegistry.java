@@ -36,6 +36,7 @@ import org.poweredrails.rails.net.packet.login.PacketReceiveEncryptResponse;
 import org.poweredrails.rails.net.packet.login.PacketReceiveLoginStart;
 import org.poweredrails.rails.net.packet.login.PacketSendDisconnect;
 import org.poweredrails.rails.net.packet.login.PacketSendEncryptRequest;
+import org.poweredrails.rails.net.packet.login.PacketSendLoginSuccess;
 import org.poweredrails.rails.net.packet.status.PacketReceivePing;
 import org.poweredrails.rails.net.packet.status.PacketReceiveStatusRequest;
 import org.poweredrails.rails.net.packet.status.PacketSendPong;
@@ -45,8 +46,6 @@ import org.poweredrails.rails.net.session.SessionStateEnum;
 import java.util.Map;
 
 public class PacketRegistry {
-
-//    private final Logger logger = Logger.getLogger("Rails");
 
     private Table<SessionStateEnum, Integer, Class<? extends Packet<?>>> tableIncoming = HashBasedTable.create();
     private Table<SessionStateEnum, Integer, Class<? extends Packet<?>>> tableOutgoing = HashBasedTable.create();
@@ -66,6 +65,7 @@ public class PacketRegistry {
         this.tableOutgoing.put(LOGIN, 0x00, PacketSendDisconnect.class);
         this.tableIncoming.put(LOGIN, 0x01, PacketReceiveEncryptResponse.class);
         this.tableOutgoing.put(LOGIN, 0x01, PacketSendEncryptRequest.class);
+        this.tableOutgoing.put(LOGIN, 0x02, PacketSendLoginSuccess.class);
     }
 
     /**

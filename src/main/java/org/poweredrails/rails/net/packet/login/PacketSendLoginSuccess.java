@@ -36,7 +36,7 @@ public class PacketSendLoginSuccess extends Packet<LoginPacketHandler> {
     private String username;
 
     public PacketSendLoginSuccess(UUID uuid, String username) {
-        this.uuid     = uuid;
+        this.uuid = uuid;
         this.username = username;
     }
 

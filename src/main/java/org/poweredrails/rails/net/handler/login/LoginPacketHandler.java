@@ -29,6 +29,7 @@ import org.json.JSONObject;
 import org.poweredrails.rails.net.packet.login.PacketReceiveEncryptResponse;
 import org.poweredrails.rails.net.packet.login.PacketReceiveLoginStart;
 import org.poweredrails.rails.net.packet.login.PacketSendEncryptRequest;
+import org.poweredrails.rails.net.packet.login.PacketSendLoginSuccess;
 import org.poweredrails.rails.net.session.Session;
 import org.poweredrails.rails.util.UUIDUtil;
 import org.poweredrails.rails.util.auth.Encryption;
@@ -128,10 +129,24 @@ public class LoginPacketHandler {
                 }
 
                 UUID uuid = UUIDUtil.fromFlatString(id);
-                // TODO: Player Properties
-                // TODO: Create new Profile
-                // TODO: Dispatch PlayerLoginEvent
                 this.logger.info("Successfully authenticated Player [" + name + ", " + uuid + "].");
+
+                sender.sendPacket(new PacketSendLoginSuccess(uuid, name));;
+                // sender.setState(SessionStateEnum.PLAY);
+
+                /*
+                 * x1. LoginSuccess
+                 * ..
+                 * 2. JoinGame
+                 * <enable encryption> NOT IF LOCALHOST
+                 * 3. SetCompression NOT REQUIRED
+                 * ..
+                 * 4. WindowItems (inventory) NOT REQUIRED
+                 * 5. ChunkBulk (world) NOT REQUIRED
+                 * ..
+                 * 6. SpawnPosition
+                 * 7. PositionAndLook (we load into the world here)
+                 */
             }).start();
         } catch (Exception e) {
             throw new RuntimeException("An exception occurred while validating a login!", e);
