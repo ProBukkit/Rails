@@ -41,7 +41,7 @@ dependencies {
     compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.0'
     compile 'org.json:json:20090211'
     compile 'com.google.guava:guava:18.0'
-    compile 'io.netty:netty-all:4.0.21.Final'
+    compile 'io.netty:netty-all:4.0.33.Final'
 
     checkstyle 'com.puppycrawl.tools:checkstyle:6.11.2'
 }

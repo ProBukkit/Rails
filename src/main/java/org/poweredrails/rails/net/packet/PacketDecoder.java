@@ -24,19 +24,20 @@
  */
 package org.poweredrails.rails.net.packet;
 
+
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
-import org.poweredrails.rails.net.buffer.Buffer;
-
 import java.util.List;
+import org.poweredrails.rails.net.buffer.Buffer;
 
 public class PacketDecoder extends MessageToMessageDecoder<Buffer> {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, Buffer buffer, List<Object> out) throws Exception {
-        int id = buffer.readVarInt(2);
+        int id = buffer.readVarInt(5);
 
         UnresolvedPacket packet = new UnresolvedPacket(id, buffer);
+
         out.add(packet);
     }
 
