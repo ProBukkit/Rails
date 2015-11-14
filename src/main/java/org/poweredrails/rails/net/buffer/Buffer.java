@@ -27,6 +27,8 @@ package org.poweredrails.rails.net.buffer;
 import com.google.common.base.Charsets;
 import io.netty.buffer.ByteBuf;
 
+import java.util.UUID;
+
 public class Buffer {
 
     private ByteBuf buffer;
@@ -259,6 +261,21 @@ public class Buffer {
      */
     public void clearBuffer() {
         this.buffer.clear();
+    }
+
+    public void writeUuid(UUID uuid) {
+        writeLong(uuid.getMostSignificantBits());
+        writeLong(uuid.getLeastSignificantBits());
+    }
+
+    public UUID readUuid() {
+        long mostSignificantBits = readLong();
+        long leastSignificantBits = readLong();
+
+        return new UUID(
+                mostSignificantBits,
+                leastSignificantBits
+        );
     }
 
 }

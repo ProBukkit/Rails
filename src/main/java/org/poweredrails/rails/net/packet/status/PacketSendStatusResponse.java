@@ -41,7 +41,7 @@ public class PacketSendStatusResponse extends Packet<StatusPacketHandler> {
                         .put("name", "1.8.8")
                         .put("protocol", 47))
                 .put("players", new JSONObject()
-                        .put("max", 100)
+                        .put("max", 20)
                         .put("online", 5)
                         .put("sample", new JSONArray()
                                 .put(new JSONObject()

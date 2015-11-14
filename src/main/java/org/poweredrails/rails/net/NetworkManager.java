@@ -46,21 +46,19 @@ public class NetworkManager {
     private final EventLoopGroup nettyBossGroup = new NioEventLoopGroup();
     private final EventLoopGroup nettyWorkerGroup = new NioEventLoopGroup();
 
-    private final PacketRegistry packetRegistry = new PacketRegistry();
-    private final HandlerRegistry handlerRegistry = new HandlerRegistry();
-
-    private SessionManager sessionManager = new SessionManager();
-
     public NetworkManager(Logger logger) {
         this.logger = logger;
 
+        PacketRegistry packetRegistry = new PacketRegistry();
+        HandlerRegistry handlerRegistry = new HandlerRegistry();
+        SessionManager sessionManager = new SessionManager();
         this.nettyBootstrap
                 .group(this.nettyBossGroup, this.nettyWorkerGroup)
                 .channel(NioServerSocketChannel.class)
                 .childOption(ChannelOption.TCP_NODELAY, true)
                 .childOption(ChannelOption.SO_KEEPALIVE, true)
                 .childHandler(new ServerChannelInitializer(
-                        this.logger, this.sessionManager, this.packetRegistry, this.handlerRegistry));
+                        this.logger, sessionManager, packetRegistry, handlerRegistry));
     }
 
     /**
@@ -87,14 +85,12 @@ public class NetworkManager {
     }
 
     private void onBindSuccess(SocketAddress address) {
-        this.logger.info("[NetworkManager] Bound to address: " + address);
-
+        this.logger.info("Bound to address: " + address);
         // Call "BindServerEvent"
     }
 
     private void onBindFailure(SocketAddress address, Throwable throwable) {
-        this.logger.info("[NetworkManager] Failed to bind to address: " + address);
-
+        this.logger.info("Failed to bind to address: " + address);
         // Call "BindServerEvent"
     }
 

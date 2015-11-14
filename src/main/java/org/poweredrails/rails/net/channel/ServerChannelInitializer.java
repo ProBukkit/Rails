@@ -72,8 +72,8 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
 
         pl.addLast("encryption", new NoopHandler());
 
-        pl.addLast("frame_encoder", new FrameEncoder());
         pl.addLast("frame_decoder", new FrameDecoder());
+        pl.addLast("frame_encoder", new FrameEncoder());
 
         pl.addLast("decoder", new PacketDecoder());
         pl.addLast("encoder", new PacketEncoder(this.sessionManager, this.packetRegistry));
