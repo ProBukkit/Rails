@@ -108,7 +108,7 @@ public class LoginPacketHandler {
                 return;
             }
 
-            // sender.enableEncryption(sharedSecret);
+            sender.enableEncryption(sharedSecret);
 
             final MessageDigest digest = MessageDigest.getInstance("SHA-1");
             digest.update(sender.getSessionId().getBytes());
@@ -131,7 +131,7 @@ public class LoginPacketHandler {
                 UUID uuid = UUIDUtil.fromFlatString(id);
                 this.logger.info("Successfully authenticated Player [" + name + ", " + uuid + "].");
 
-                sender.sendPacket(new PacketSendLoginSuccess(uuid, name));;
+                sender.sendPacket(new PacketSendLoginSuccess(uuid, name));
                 // sender.setState(SessionStateEnum.PLAY);
 
                 /*

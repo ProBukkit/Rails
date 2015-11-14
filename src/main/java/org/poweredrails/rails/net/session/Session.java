@@ -27,10 +27,12 @@ package org.poweredrails.rails.net.session;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.poweredrails.rails.Main;
+import org.poweredrails.rails.net.packet.EncryptionHandler;
 import org.poweredrails.rails.net.packet.Packet;
 
 import java.util.Random;
 import java.util.logging.Logger;
+import javax.crypto.SecretKey;
 
 public class Session {
 
@@ -78,6 +80,14 @@ public class Session {
         if (!Main.getEventBus().firePacket(this, packet)) {
             this.channel.writeAndFlush(packet);
         }
+    }
+
+    /**
+     * Enables encryption for this session's channel.
+     * @param sharedSecret the shared secret to encrypt/decrypt with
+     */
+    public void enableEncryption(SecretKey sharedSecret) {
+        this.channel.pipeline().replace("encryption", "encryption", new EncryptionHandler(sharedSecret));
     }
 
     /**
